@@ -22,7 +22,7 @@ public class SatelliteManager : MonoBehaviour
 
         string[] lines = csv.Split('\n');
 
-        lines = lines.Skip(1).ToArray();
+        lines = lines.Skip(1).ToArray();    
 
         foreach(string l in lines){
             string[] positions = l.Split(',');
