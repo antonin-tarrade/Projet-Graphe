@@ -6,25 +6,31 @@ using UnityEngine;
 
 
 
-public class GraphElement<T>
+public class Vertex<T>
 {
     public T element { get; private set; }
-    private ISet<GraphLink<T>> links;
+    public int degree { get => edges.Count; }
 
-    public GraphElement(T element)
+    public Action<Vertex<T>> OnVertexUpdate;
+
+    protected ISet<Edge<T>> edges;
+    protected Graph<T> graph;
+
+    public Vertex(T element, Graph<T> graph)
     {
         this.element = element;
-        links = new HashSet<GraphLink<T>>();
+        edges = new HashSet<Edge<T>>();
+        this.graph = graph;
     }
 
-    public void AddLink(GraphLink<T> link)
+    public virtual void AddLink(Edge<T> edge)
     {
-        links.Add(link);
+        edges.Add(edge);
     }
 
-    public void RemoveLink(GraphLink<T> link)
+    public virtual void RemoveLink(Edge<T> edge)
     {
-        links.Remove(link);
+        edges.Remove(edge);
     }
 
     public virtual void Destroy() 
@@ -32,29 +38,50 @@ public class GraphElement<T>
 
     }
 
+    protected virtual void SignalUpdate()
+    {
+        OnVertexUpdate?.Invoke(this);
+    }
+
 }
 
-public class GraphLink<T>
+public class VertexCreator<T>
 {
-    protected GraphElement<T> e1;
-    protected GraphElement<T> e2;
+    public virtual Vertex<T> CreateVertex(T element, Graph<T> graph) => new(element, graph);
+}
 
-    public GraphLink(GraphElement<T> e1, GraphElement<T> e2)
+public class Edge<T>
+{
+    protected Vertex<T> v1;
+    protected Vertex<T> v2;
+
+
+    public Edge(Vertex<T> v1, Vertex<T> v2)
     {
-        this.e1 = e1;
-        this.e2 = e2;
+        this.v1 = v1;
+        this.v2 = v2;
     }
 
     public virtual void Create()
     {
-        e1?.AddLink(this);
-        e2?.AddLink(this);
+        v1?.AddLink(this);
+        v2?.AddLink(this);
     }
     
     public virtual void Clear()
     {
-        e1?.RemoveLink(this);
-        e2?.RemoveLink(this);
+        v1?.RemoveLink(this);
+        v2?.RemoveLink(this);
+    }
+
+    public virtual void Hide()
+    {
+
+    }
+
+    public virtual void Show()
+    {
+
     }
 
     public virtual void Destroy() 
@@ -63,125 +90,191 @@ public class GraphLink<T>
     }
 }
 
-public class GraphLinkCreator<T>
+public class EdgeCreator<T>
 {
-    public virtual GraphLink<T> CreateGraphLink(GraphElement<T> e1, GraphElement<T> e2)
-    {
-        return new GraphLink<T>(e1, e2);
-    }
+    public virtual Edge<T> CreateEdge(Vertex<T> v1, Vertex<T> v2) => new(v1, v2);
 }
 
 public class Graph<T>
 {
-
-    public static Graph<T> GetGraph (ref Graph<T> graph)
+    public static void GetGraph (ref Graph<T> graph, Func<T,T,bool> comparator, VertexCreator<T> vertexCreator, EdgeCreator<T> edgeCreator, T[] elems)
     {
-        if (graph == null)
-        {
-            return new Graph<T>();
-        }
-        T[] elems = graph.refs.Keys.ToArray<T>();
-        graph.Destroy();
-        return new Graph<T>(elems);
+
+        graph?.Destroy();
+        graph = new Graph<T>();
+        graph.Set(comparator);
+        graph.Set(vertexCreator);
+        graph.Set(edgeCreator);
+        graph.Add(elems);
+        graph.CalculateAll();
     }
 
-    public static Graph<T> GetGraph(ref Graph<T> graph, T[] elems)
-    {
-        if (graph == null)
-        {
-            return new Graph<T>(elems);
-        }
-        graph.Destroy();
-        return new Graph<T>(elems);
-    }
+    private List<Vertex<T>> vertices;
+    private List<Edge<T>> edges;
+    private Dictionary<T, Vertex<T>> refs;
+
+    private Func<T, T, bool> comparator;
+    private EdgeCreator<T> edgeCreator;
+    private VertexCreator<T> vertexCreator;
 
 
-    private List<GraphElement<T>> elements;
-    private List<GraphLink<T>> links;
-    private Dictionary<T, GraphElement<T>> refs;
+    public Action OnGraphCreated;
+
+    public bool[][] adjacenceMatrix { get; private set; }
+    public bool[][] clusteringMatrix { get; private set; }
+    public Dictionary<int,int> degreeDistribution { get; private set; }
+    public Dictionary<int,int> clusteringDegreeDistribution { get; private set; }
+    public int meanDegree { get => vertices.Aggregate(0, (s, elem) => s + elem.degree) / order; }
+    public int maxDegree { get => degreeDistribution.Keys.Max(); }
+    public int minDegree { get => degreeDistribution.Keys.Min(); }
+    public int meanClusterDegree;
+    public int maxClusterDegree { get => degreeDistribution.Keys.Max(); }
+    public int minClusterDegree {  get => degreeDistribution.Keys.Min(); }
+    public int order { get => vertices.Count; }
+
 
     private Graph()
     {
-        elements = new List<GraphElement<T>>();
-        links = new List<GraphLink<T>>();
-        refs = new Dictionary<T, GraphElement<T>>();
+        vertices = new List<Vertex<T>>();
+        edges = new List<Edge<T>>();
+        refs = new Dictionary<T, Vertex<T>>();
     }
 
-    private Graph(T[] elements) : this()
-    {
-        foreach (T e in elements)
-        {
-            Add(e);
-        }
-    }
+    public void Set (Func<T,T,bool> comparator) => this.comparator = comparator;
+    public void Set (EdgeCreator<T> edgeCreator) => this.edgeCreator = edgeCreator;
+    public void Set (VertexCreator<T> vertexCreator) => this.vertexCreator = vertexCreator;
 
-    public int GetSize()
-    {
-        return elements.Count;
-    }
+    public T Get (int i) => (i >= 0 && i < order) ? vertices[i].element : default(T);
 
-    public T Get(int i)
-    {
-        return (i >= 0 && i < GetSize()) ? elements[i].element : default(T);
-    }
-
-    public int IndexOf(T element)
-    {
-        if (refs.TryGetValue(element, out GraphElement<T> value)) return elements.IndexOf(value);
-        return -1;
-    }
+    public int IndexOf (T element) => 
+        (refs.TryGetValue(element, out Vertex<T> value))? vertices.IndexOf(value) : -1;
 
 
-    public void Add(T element)
+    private void Add(T element)
     {
-        GraphElement<T> e = new GraphElement<T>(element);
-        elements.Add(e);
+        Vertex<T> e = vertexCreator.CreateVertex(element, this);
+        vertices.Add(e);
         refs.Add(element, e);
     }
 
-    public bool[][] GetAdjacenceMatrix(Func<T, T, bool> comparator)
+    private void Add(T[] elements)
     {
-        int size = GetSize();
-        bool[][] m = new bool[size][];
-        for (int i = 0; i < size; i ++)
-        {
-            m[i] = new bool[size];
-            for (int j = 0; j < size; j++) m[i][j] = comparator(Get(i), Get(j));
-        }
-        return m;
+        foreach (T element in elements) Add(element);
     }
 
-    public void ClearLinks()
+
+    public void CalculateAll()
     {
-        foreach (GraphLink<T> link in links)
-        {
-            link.Destroy();
-        }
-        links.Clear();
+        adjacenceMatrix = CalculateAdjacenceMatrix();
+        CreateLinks();
+        clusteringMatrix = CalculateClusteringMatrix();
+        degreeDistribution = CalculateDegreeDistribution();
+        clusteringDegreeDistribution = CalculateClusteringDegreeDistribution();
+        OnGraphCreated?.Invoke();
     }
 
-    public void SetLinks(Func<T, T, bool> comparator, GraphLinkCreator<T> linkCreator)
+    
+    private bool[][] CalculateAdjacenceMatrix()
+    {
+        bool[][] M = new bool[order][];
+        for (int i = 0; i < order; i ++)
+        {
+            M[i] = new bool[order];
+            for (int j = 0; j < order; j++) M[i][j] = comparator(Get(i), Get(j));
+        }
+        return M;
+    }
+
+    private bool[][] CalculateClusteringMatrix()
+    {
+        bool[][] M = new bool[adjacenceMatrix.Length][];
+        for (int i = 0; i < adjacenceMatrix.Length; i++)
+        {
+            M[i] = new bool[adjacenceMatrix.Length];
+            for (int j = 0; j < adjacenceMatrix.Length; j++)
+            {
+                M[i][j] = false;
+                for (int k = 0; k < adjacenceMatrix.Length; k++)
+                {
+                    if (adjacenceMatrix[i][k] && adjacenceMatrix[k][j])
+                    {
+                        M[i][j] = adjacenceMatrix[i][j];
+                        break;
+                    }
+                }
+            }
+        }
+        return M;
+    }
+
+    private Dictionary<int, int> CalculateDegreeDistribution()
+    {
+        Dictionary<int, int> distrib = new();
+        foreach (Vertex<T> vertex in vertices) {
+            if (distrib.ContainsKey(vertex.degree)) distrib[vertex.degree]++;
+            else distrib.Add(vertex.degree, 1);
+        }
+        return distrib;
+    }
+
+    private Dictionary<int,int> CalculateClusteringDegreeDistribution()
+    {
+        return null;
+    }
+
+    
+
+
+    private void CreateLinks()
     {
         ClearLinks();
-        bool[][] adjacenceMatrix = GetAdjacenceMatrix(comparator);
-        int size = adjacenceMatrix.Length;
-        int n = Mathf.Min(size, GetSize());
-        for (int i = 0; i < n; i ++)
+        for (int i = 0; i < order; i++)
         {
-            for (int j = 0; j < n; j ++)
+            for (int j = 0; j < i; j++)
             {
                 if (i != j && adjacenceMatrix[i][j])
                 {
-                    GraphLink<T> link = linkCreator.CreateGraphLink(elements[i], elements[j]);
-                    links.Add(link);
-                    link.Create();
+                    Edge<T> edge = edgeCreator.CreateEdge(vertices[i], vertices[j]);
+                    edges.Add(edge);
+                    edge.Create();
                 }
             }
         }
     }
 
-    public void Destroy() {
-        foreach (GraphElement<T> e in elements) e.Destroy();
-        foreach (GraphLink<T> l in links) l.Destroy();
+
+    public void ShowLinks()
+    {
+        foreach (Edge<T> edge in edges) edge.Show();
+    }
+
+    public void HideLinks()
+    {
+        foreach (Edge<T> edge in edges) edge.Hide();
+    }
+
+    public void ClearLinks()
+    {
+        foreach (Edge<T> edge in edges)
+        {
+            edge.Clear();
+        }
+        edges.Clear();
+    }
+
+    public void ApplyTreatment(Action<Vertex<T>> treatment)
+    {
+        foreach (Vertex<T> vertex in vertices) treatment(vertex);
+    }
+
+    public void ApplyTreamen(Action<Edge<T>> treatment)
+    {
+        foreach (Edge<T> edge in edges) treatment(edge);
+    }
+
+    public void Destroy()
+    {
+        foreach (Vertex<T> vertex in vertices) vertex.Destroy();
+        foreach (Edge<T> edge in edges) edge.Destroy();
     }
 }

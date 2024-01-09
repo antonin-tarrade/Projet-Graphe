@@ -17,7 +17,14 @@ public class SatelliteManager : MonoBehaviour
 
     public float treshold;
     public LineRenderer satelliteLink;
-    public bool constructGraph = false;
+
+    public bool calculate = false;
+    public bool hideEdges = false;
+    public bool showEdges = false;
+
+    [SerializeField] private Gradient degreeGradient;
+    private float minDegree;
+    private float maxDegree;
   
 
     // Start is called before the first frame update
@@ -30,10 +37,20 @@ public class SatelliteManager : MonoBehaviour
 
     private void Update()
     {
-        if (constructGraph)
+        if (calculate)
         {
-            ConstructAndDisplayGraph();
-            constructGraph = false;
+            ConstructGraph();
+            calculate = false;
+        }
+        if (hideEdges)
+        {
+            graph.HideLinks();
+            hideEdges = false;
+        }
+        if (showEdges)
+        {
+            graph.ShowLinks();
+            showEdges = false;
         }
     }
 
@@ -67,20 +84,22 @@ public class SatelliteManager : MonoBehaviour
             }
 
 
-            satellite.transform.position = new Vector3(float.Parse(positions[1]) / 5000, float.Parse(positions[2]) / 5000, float.Parse(positions[3]) / 5000);
+            satellite.transform.position = new Vector3(float.Parse(positions[1]) / 1000, float.Parse(positions[2]) / 1000, float.Parse(positions[3]) / 1000);
         }
-        graph = Graph<GameObject>.GetGraph(ref graph, satellites.ToArray());
     }
 
-    public bool CompareWithTreshHold(GameObject s1, GameObject s2)
+    private bool CompareWithTreshHold(GameObject s1, GameObject s2)
     {
         return Vector3.Distance(s1.transform.position, s2.transform.position) < treshold; 
     }
 
-    public void ConstructAndDisplayGraph()
+
+    public void ConstructGraph()
     {
-        graph.SetLinks(CompareWithTreshHold, new LineRendererLinkCreator(satelliteLink));
+        Graph<GameObject>.GetGraph(
+            ref graph, CompareWithTreshHold, new ColoredVertexCreator(degreeGradient), new LineRendererEdgeCreator(satelliteLink), satellites.ToArray());
     }
+
 }
 
 
