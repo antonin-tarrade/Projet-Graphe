@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SatelliteManager : MonoBehaviour
 {
     public GameObject satellitePrefab;
     public int csvToLoad;
+    public int ratio;
     private TextAsset[] allCsvs;
 
 
@@ -23,9 +25,14 @@ public class SatelliteManager : MonoBehaviour
     public bool showEdges = false;
 
     [SerializeField] private Gradient degreeGradient;
-    private float minDegree;
-    private float maxDegree;
+
+    private Vector3 averagePosition;
   
+
+
+    private void Awake(){
+        
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -77,15 +84,18 @@ public class SatelliteManager : MonoBehaviour
             GameObject satellite = Instantiate(satellitePrefab, transform);
             satellites.Add(satellite);
 
-            for (int i = 1; i <= 3; i++)
-            {
-                string[] subs = positions[i].Split(".");
-                positions[i] = subs[0] + "," + subs[1];
-            }
+            // for (int i = 1; i <= 3; i++)
+            // {
+            //     string[] subs = positions[i].Split(".");
+            //     positions[i] = subs[0] + "," + subs[1];
+            // }
 
-
-            satellite.transform.position = new Vector3(float.Parse(positions[1]) / 1000, float.Parse(positions[2]) / 1000, float.Parse(positions[3]) / 1000);
+            Vector3 pos = ParsePositions(positions);
+            averagePosition += pos;
+            satellite.transform.position  = pos;
         }
+        averagePosition /= transform.childCount;
+        Camera.main.GetComponent<CameraManager>().SetAveragePos(averagePosition);
     }
 
     private bool CompareWithTreshHold(GameObject s1, GameObject s2)
@@ -100,6 +110,16 @@ public class SatelliteManager : MonoBehaviour
             ref graph, CompareWithTreshHold, new ColoredVertexCreator(degreeGradient), new LineRendererEdgeCreator(satelliteLink), satellites.ToArray());
     }
 
+    private Vector3 ParsePositions(string[] line){
+        string[] positions = line.Skip(1).ToArray();
+        Vector3 pos = new();
+
+        for(int i=0; i < positions.Length; i++){
+            pos[i] = float.Parse(positions[i])/ratio;
+        }
+
+        return pos;
+    }
 }
 
 
