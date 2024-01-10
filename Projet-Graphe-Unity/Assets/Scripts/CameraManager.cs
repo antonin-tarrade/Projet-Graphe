@@ -33,7 +33,7 @@ public class CameraManager : MonoBehaviour
             transform.RotateAround(center,transform.right,-Time.deltaTime * speed);
         }
 
-        if (Input.GetKey(KeyCode.Z) || Input.GetKeyDown(KeyCode.W) ){
+        if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.W) ){
             transform.position += speed * Time.deltaTime * (transform.position - center).normalized;
             
         }

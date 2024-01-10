@@ -11,7 +11,7 @@ public class Vertex<T>
     public T element { get; private set; }
     public int degree { get => edges.Count; }
 
-    public Action<Vertex<T>> OnVertexUpdate;
+    public event Action<Vertex<T>> OnVertexUpdate;
 
     protected ISet<Edge<T>> edges;
     protected Graph<T> graph;
@@ -118,7 +118,7 @@ public class Graph<T>
     private VertexCreator<T> vertexCreator;
 
 
-    public Action OnGraphCreated;
+    public event Action OnGraphCreated;
 
     public bool[][] adjacenceMatrix { get; private set; }
     public bool[][] clusteringMatrix { get; private set; }

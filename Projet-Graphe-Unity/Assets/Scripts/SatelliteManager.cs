@@ -10,6 +10,7 @@ public class SatelliteManager : MonoBehaviour
     public int csvToLoad;
     public int ratio;
     private TextAsset[] allCsvs;
+    [SerializeField] private bool parseWithComma;
 
 
     private List<GameObject> satellites;
@@ -84,11 +85,13 @@ public class SatelliteManager : MonoBehaviour
             GameObject satellite = Instantiate(satellitePrefab, transform);
             satellites.Add(satellite);
 
-            // for (int i = 1; i <= 3; i++)
-            // {
-            //     string[] subs = positions[i].Split(".");
-            //     positions[i] = subs[0] + "," + subs[1];
-            // }
+            if (parseWithComma) {
+                for (int i = 1; i <= 3; i++)
+                {
+                    string[] subs = positions[i].Split(".");
+                    positions[i] = subs[0] + "," + subs[1];
+                }
+            }
 
             Vector3 pos = ParsePositions(positions);
             averagePosition += pos;
@@ -100,7 +103,7 @@ public class SatelliteManager : MonoBehaviour
 
     private bool CompareWithTreshHold(GameObject s1, GameObject s2)
     {
-        return Vector3.Distance(s1.transform.position, s2.transform.position) < treshold; 
+        return Vector3.Distance(s1.transform.position, s2.transform.position) < treshold * 1000 / ratio; 
     }
 
 
