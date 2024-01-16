@@ -2339,7 +2339,7 @@ Canvas:
   m_GameObject: {fileID: 1632024867}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 963194227}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -2496,7 +2496,7 @@ MonoBehaviour:
   satellitePrefab: {fileID: 7217370922280275294, guid: 1a07e8de974c34df9887f43cadb6e99d, type: 3}
   csvToLoad: 2
   ratio: 500
-  parseWithComma: 1
+  parseWithComma: 0
   treshold: 0
   satelliteLink: {fileID: 1055437126}
   calculate: 0
@@ -2532,6 +2532,7 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  clearall: 0
 --- !u!1 &1727829326
 GameObject:
   m_ObjectHideFlags: 0
