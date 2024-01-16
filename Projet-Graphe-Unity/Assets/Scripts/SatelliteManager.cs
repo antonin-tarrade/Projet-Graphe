@@ -28,37 +28,57 @@ public class SatelliteManager : MonoBehaviour
     [SerializeField] private Gradient degreeGradient;
 
     private Vector3 averagePosition;
-  
 
 
+    // DEBUG
+    public bool clearall = false;
+
+    
     private void Awake(){
-        
+
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        allCsvs = Resources.LoadAll<TextAsset>("Csv");
         satellites = new List<GameObject>();
+        allCsvs = Resources.LoadAll<TextAsset>("Csv");
+        csvToLoad = 0;
+        treshold = 20;
         DisplayFromCsv(csvToLoad);
+        ConstructGraph();
     }
 
     private void Update()
     {
-        if (calculate)
-        {
-            ConstructGraph();
-            calculate = false;
-        }
-        if (hideEdges)
-        {
-            graph.HideLinks();
-            hideEdges = false;
-        }
-        if (showEdges)
-        {
-            graph.ShowLinks();
-            showEdges = false;
+        // if (calculate)
+        // {
+        //     ConstructGraph();
+        //     calculate = false;
+        // }
+        // if (hideEdges)
+        // {
+        //     graph.HideLinks();
+        //     hideEdges = false;
+        // }
+        // if (showEdges)
+        // {
+        //     graph.ShowLinks();
+        //     showEdges = false;
+        // }
+    }
+
+    public void SetTreshold(int dropDownValue){
+        switch(dropDownValue){
+            case 0 : 
+                treshold = 20;
+                break;
+            case 1 :
+                treshold = 40;
+                break;
+            case 2 : 
+                treshold = 60;
+                break;
         }
     }
 
@@ -71,6 +91,10 @@ public class SatelliteManager : MonoBehaviour
 
     public void DisplayFromCsv(int number)
     {
+        CameraManager camera = Camera.main.GetComponent<CameraManager>();
+        camera.transform.position = new Vector3(0,0,0);
+        camera.transform.rotation = Quaternion.identity;
+        averagePosition = new Vector3(0,0,0);
 
         string csv = allCsvs[number].text;
 
@@ -97,8 +121,8 @@ public class SatelliteManager : MonoBehaviour
             averagePosition += pos;
             satellite.transform.position  = pos;
         }
-        averagePosition /= transform.childCount;
-        Camera.main.GetComponent<CameraManager>().SetAveragePos(averagePosition);
+        averagePosition /= lines.Length;
+        camera.SetAveragePos(averagePosition);
     }
 
     private bool CompareWithTreshHold(GameObject s1, GameObject s2)
@@ -120,7 +144,6 @@ public class SatelliteManager : MonoBehaviour
         for(int i=0; i < positions.Length; i++){
             pos[i] = float.Parse(positions[i])/ratio;
         }
-
         return pos;
     }
 }
