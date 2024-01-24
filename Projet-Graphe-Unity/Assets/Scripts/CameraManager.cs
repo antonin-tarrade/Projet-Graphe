@@ -41,8 +41,6 @@ public class CameraManager : MonoBehaviour
             transform.position -= speed * Time.deltaTime * (transform.position - center).normalized;
             
         }
-
-        // transform.LookAt(center);
     }
 
     public void SetAveragePos(Vector3 position){
