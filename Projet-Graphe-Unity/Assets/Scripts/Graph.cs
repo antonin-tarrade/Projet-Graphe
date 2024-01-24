@@ -13,7 +13,7 @@ public class Vertex<T>
 
     public event Action<Vertex<T>> OnVertexUpdate;
 
-    protected ISet<Edge<T>> edges;
+    public ISet<Edge<T>> edges { get; protected set; }
     protected Graph<T> graph;
 
     public Vertex(T element, Graph<T> graph)
@@ -60,6 +60,13 @@ public class Edge<T>
     {
         this.v1 = v1;
         this.v2 = v2;
+    }
+
+    public Vertex<T> GetNeighbour(Vertex<T> vertex)
+    {
+        if (vertex == v1) return v2;
+        if (vertex == v2) return v1;
+        return null;
     }
 
     public virtual void Create()
@@ -124,6 +131,7 @@ public class Graph<T>
     public bool[][] clusteringMatrix { get; private set; }
     public Dictionary<int,int> degreeDistribution { get; private set; }
     public Dictionary<int,int> clusteringDegreeDistribution { get; private set; }
+    public List<List<int>> connexComponents { get; private set; }
     public int meanDegree { get => vertices.Aggregate(0, (s, elem) => s + elem.degree) / order; }
     public int maxDegree { get => degreeDistribution.Keys.Max(); }
     public int minDegree { get => degreeDistribution.Keys.Min(); }
@@ -168,9 +176,13 @@ public class Graph<T>
         adjacenceMatrix = CalculateAdjacenceMatrix();
         CreateLinks();
         clusteringMatrix = CalculateClusteringMatrix();
-        degreeDistribution = CalculateDegreeDistribution();
-        clusteringDegreeDistribution = CalculateClusteringDegreeDistribution();
-        OnGraphCreated?.Invoke();
+        degreeDistribution = CalculateDegreeDistribution(adjacenceMatrix);
+        clusteringDegreeDistribution = CalculateDegreeDistribution(clusteringMatrix);
+        connexComponents = CalculateConnexComponents(adjacenceMatrix);
+
+        
+
+        OnGraphCreated?.Invoke();     
     }
 
     
@@ -207,19 +219,66 @@ public class Graph<T>
         return M;
     }
 
-    private Dictionary<int, int> CalculateDegreeDistribution()
+
+    //private Dictionary<int, int> CalculateDegreeDistribution()
+    //{
+    //    Dictionary<int, int> distrib = new();
+    //    foreach (Vertex<T> vertex in vertices) {
+    //        if (distrib.ContainsKey(vertex.degree)) distrib[vertex.degree]++;
+    //        else distrib.Add(vertex.degree, 1);
+    //    }
+    //    return distrib;
+    //}
+
+    private Dictionary<int,int> CalculateDegreeDistribution(bool[][] matrix)
     {
+        int length = matrix.Length;
         Dictionary<int, int> distrib = new();
-        foreach (Vertex<T> vertex in vertices) {
-            if (distrib.ContainsKey(vertex.degree)) distrib[vertex.degree]++;
-            else distrib.Add(vertex.degree, 1);
+        for (int i = 0; i < length;  i++)
+        {
+            int degree = 0;
+            for (int j = 0; j < length; j++)
+            {
+                if (matrix[i][j]) degree++;
+            }
+            if (distrib.ContainsKey(degree)) distrib[degree]++;
+            else distrib.Add(degree, 1);
         }
         return distrib;
     }
 
-    private Dictionary<int,int> CalculateClusteringDegreeDistribution()
+
+    private List<List<int>> CalculateConnexComponents(bool[][] matrix)
     {
-        return null;
+
+        List<List<int>> components = new();
+        
+        List<Vertex<T>> freeVertices = new(vertices);
+
+        while (freeVertices.Count > 0)
+        {
+            List<int> component = new();
+            Vertex<T> origin = freeVertices[0];
+            Queue<Vertex<T>> toHandle = new();
+            toHandle.Enqueue(origin);
+
+            while (toHandle.TryDequeue(out Vertex<T> next)) {
+                
+                component.Add(IndexOf(next.element));
+                freeVertices.Remove(next);
+                foreach (Edge<T> edge in next.edges)
+                {
+                    Vertex<T> neighbour = edge.GetNeighbour(next);
+                    if (!toHandle.Contains(neighbour) && freeVertices.Contains(neighbour))
+                    {
+                        toHandle.Enqueue(neighbour);
+                    }
+                }
+            }
+            components.Add(component);
+        }
+        Debug.Log("Number of connex components : " + components.Count);
+        return components;
     }
 
     
