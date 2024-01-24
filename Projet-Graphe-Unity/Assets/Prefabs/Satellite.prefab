@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2708289382114933257}
   - component: {fileID: 4063492413017015275}
   - component: {fileID: 790212540316723515}
+  - component: {fileID: 4049990038682085509}
   m_Layer: 0
   m_Name: Satellite
   m_TagString: Untagged
@@ -63,6 +64,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a2f44bb40f8eb42d2958e715c629781d, type: 2}
+  - {fileID: 2100000, guid: 4dd670ba31bfb4bad99732a71389866e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -105,3 +107,19 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4049990038682085509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7217370922280275294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c573e953fae4c4a26bbebb533db35abf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  satelliteName: 
+  nameLength: 10
+  degree: 0
+  zoomDistance: 30
