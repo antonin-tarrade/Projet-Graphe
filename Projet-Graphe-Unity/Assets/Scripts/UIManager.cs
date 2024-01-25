@@ -13,12 +13,20 @@ public class UIManager : MonoBehaviour
 
     public static UIManager instance;
 
+
+    public GameObject graphInfo;
+
+    public GameObject histogramPrefab;
+
+
     [SerializeField] private Vector2 uiPosition;
 
 
     private SatelliteManager satelliteManager;
 
     private GameObject displayedUI;
+
+
 
 
     private void Awake()
@@ -45,13 +53,13 @@ public class UIManager : MonoBehaviour
     {
         if (displayedUI != null)
         {
-            RemoveUI();
-            Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+            RemoveSatelliteUI();
+            DisplaySatelliteUI(satelliteManager.selectedSatellite.GetComponent<Satellite>());
         }
     }
 
 
-    public void Display(Satellite sattelite)
+    public void DisplaySatelliteUI(Satellite sattelite)
     {
         GameObject UI = Instantiate(satteliteUIPrefab);
         UI.name = "Sattelite " +  sattelite.satelliteName;
@@ -69,12 +77,11 @@ public class UIManager : MonoBehaviour
         displayedUI = UI;
     }
 
-    public void RemoveUI()
+    public void RemoveSatelliteUI()
     {
         Destroy(displayedUI);
         displayedUI = null;
     }
-
 
     public void ActivateReturnButton()
     {
@@ -85,5 +92,28 @@ public class UIManager : MonoBehaviour
     {
         goBackButton.SetActive(false);
     }
+
+
+    public void DisplayGraphUI()
+    {
+        GameObject graphUI = Instantiate(graphInfo);
+        graphUI.transform.SetParent(goBackButton.transform.parent);
+
+        graphUI.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f, 0f);
+        Transform mainUI = graphUI.transform.GetChild(1);
+        Transform infoBox = mainUI.transform.GetChild(1);
+        Transform hist1 = infoBox.transform.GetChild(0);
+        Transform hist2 = infoBox.transform.GetChild(1);
+        Transform meanBox = infoBox.transform.GetChild(2);
+        Transform hist3 = infoBox.transform.GetChild(3);
+
+        meanBox.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Mean Degree : " + satelliteManager.graph.meanDegree;
+        meanBox.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Mean Clustering Degree : " + satelliteManager.graph.meanClusterDegree;
+
+        Histogram h1 = new Histogram();
+
+    }
+
+
 
 }

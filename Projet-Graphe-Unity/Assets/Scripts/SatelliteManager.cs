@@ -28,7 +28,7 @@ public class SatelliteManager : MonoBehaviour
 
     private List<GameObject> satellites;
 
-    private Graph<GameObject> graph;
+    public Graph<GameObject> graph;
     public Action OnGraphChanged;
 
 

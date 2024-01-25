@@ -81,7 +81,7 @@ public class CameraManager : MonoBehaviour
     public void GoTo(Transform target){
         if (!canZoom) { return; }
         uiManager.DesactivateReturnButton();
-        uiManager.RemoveUI();
+        uiManager.RemoveSatelliteUI();
         canMove = false;
         StartCoroutine(ZoomTo(target.position,target.position,true));
         
@@ -97,7 +97,7 @@ public class CameraManager : MonoBehaviour
             yield return null;
         }
         if (zoom){
-            uiManager.Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+            uiManager.DisplaySatelliteUI(satelliteManager.selectedSatellite.GetComponent<Satellite>());
             uiManager.ActivateReturnButton();
         } else {
             satelliteManager.selectedSatellite.GetComponent<Satellite>().RemoveOutlines();
@@ -111,7 +111,7 @@ public class CameraManager : MonoBehaviour
 
 
     public void UnZoom(){
-        uiManager.RemoveUI();
+        uiManager.RemoveSatelliteUI();
         uiManager.DesactivateReturnButton();
         canZoom = false;
         StartCoroutine(ZoomTo(spawnPosition, center ,false));
