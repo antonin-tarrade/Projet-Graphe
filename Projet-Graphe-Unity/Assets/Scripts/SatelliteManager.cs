@@ -1,8 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+
+[Serializable]
+public class ListWrapper<T>
+{
+    public ListWrapper(List<T> list)
+    {
+        myList = list;
+    }
+    public List<T> myList;
+}
 
 public class SatelliteManager : MonoBehaviour
 {
@@ -22,13 +33,15 @@ public class SatelliteManager : MonoBehaviour
     public LineRenderer satelliteLink;
 
     public bool calculate = false;
-    public bool hideEdges = false;
-    public bool showEdges = false;
+    public bool destroyComputer = false;
 
     [SerializeField] private Gradient degreeGradient;
 
     private Vector3 averagePosition;
 
+    //DEBUG
+    public List<ListWrapper<float>> distances;
+    public List<ListWrapper<bool>> adjacence;
 
     // DEBUG
     public bool clearall = false;
@@ -66,6 +79,12 @@ public class SatelliteManager : MonoBehaviour
         //     graph.ShowLinks();
         //     showEdges = false;
         // }
+        //if (destroyComputer)
+        //{
+        //    graph.CalculateClicks();
+        //    Debug.Log(graph.clicks.Count);
+        //}
+
     }
 
     public void SetTreshold(int dropDownValue){
@@ -126,15 +145,31 @@ public class SatelliteManager : MonoBehaviour
     }
 
     private bool CompareWithTreshHold(GameObject s1, GameObject s2)
-    {
-        return Vector3.Distance(s1.transform.position, s2.transform.position) < treshold * 1000 / ratio; 
-    }
+        => Vector3.Distance(s1.transform.position, s2.transform.position) < treshold * 1000 / ratio;
+
+    private float Distance(GameObject s1, GameObject s2)
+        => Vector3.Distance(s1.transform.position, s2.transform.position) * 1000 / ratio;
+
+    private float SquaredDistance(GameObject s1, GameObject s2)
+        => Mathf.Pow(Distance(s1,s2), 2);
+ 
 
 
     public void ConstructGraph()
     {
         Graph<GameObject>.GetGraph(
-            ref graph, CompareWithTreshHold, new ColoredVertexCreator(degreeGradient), new LineRendererEdgeCreator(satelliteLink), satellites.ToArray());
+            ref graph, 
+            CompareWithTreshHold, 
+            new ColoredVertexCreator(degreeGradient),
+            new WeightedEdgeCreator(Distance, new LineRendererEdgeCreator(satelliteLink)),
+            satellites.ToArray());
+        distances = new();
+        adjacence = new();
+        foreach (float[] tab in graph.shortestDistanceMatrix)
+            distances.Add(new(new(tab)));
+        foreach (bool[] tab in graph.adjacenceMatrix)
+            adjacence.Add(new(new(tab)));
+
     }
 
     private Vector3 ParsePositions(string[] line){

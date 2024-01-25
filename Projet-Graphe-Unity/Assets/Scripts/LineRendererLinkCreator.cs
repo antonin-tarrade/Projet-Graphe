@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -121,4 +122,23 @@ public class LineRendererEdgeCreator : EdgeCreator<GameObject>
         this.linePrefab = linePrefab;
     }
     public override Edge<GameObject> CreateEdge(Vertex<GameObject> v1, Vertex<GameObject> v2) => new LineRendererEdge(v1, v2, linePrefab);
+}
+
+public class WeightedEdgeCreator : EdgeCreator<GameObject>
+{
+    private Func<GameObject, GameObject, float> weightFunc;
+    private EdgeCreator<GameObject> subCreator;
+
+    public WeightedEdgeCreator(Func<GameObject, GameObject, float> weightFunc, EdgeCreator<GameObject> subCreator)
+    {
+        this.weightFunc = weightFunc;
+        this.subCreator = subCreator;
+    }
+
+    public override Edge<GameObject> CreateEdge(Vertex<GameObject> v1, Vertex<GameObject> v2)
+    {
+        Edge<GameObject> edge  = subCreator.CreateEdge(v1, v2);
+        edge.weightFunc = weightFunc;
+        return edge;
+    }
 }
