@@ -141,5 +141,16 @@ public class UIManager : MonoBehaviour
     }
 
 
+    public void DisplayOrHIdeInfo(bool display)
+    {
+        if (display)
+        {
+            DisplayGraphUI();
+        } else
+        {
+            RemoveGraphUI();
+        }
+    }
+
 
 }
