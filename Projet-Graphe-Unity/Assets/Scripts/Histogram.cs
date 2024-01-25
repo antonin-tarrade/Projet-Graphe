@@ -6,9 +6,6 @@ using UnityEngine;
 public class Histogram 
 {
     private List<int> abcisses;
-    private Dictionary<int, int> values;
-
-    public Dictionary<int, int> histogram;
 
     public Histogram(List<int> abcisses)
     {
