@@ -1384,8 +1384,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 100
   zoomRate: 0.5
-  zoomDistance: 5
-  rotationRate: 0.5
+  zoomDistance: 10
+  rotationRate: 0.6
 --- !u!1 &1055437125
 GameObject:
   m_ObjectHideFlags: 0
@@ -2499,7 +2499,8 @@ MonoBehaviour:
   satellitePrefab: {fileID: 8690310736756841797, guid: 62db1f9e11bbe7b43b8c45fe475ecde0, type: 3}
   csvToLoad: 2
   ratio: 500
-  parseWithComma: 1
+  parseWithComma: 0
+  selectedSatellite: {fileID: 0}
   treshold: 0
   satelliteLink: {fileID: 1055437126}
   edgeSelectionThickness: 1.1
