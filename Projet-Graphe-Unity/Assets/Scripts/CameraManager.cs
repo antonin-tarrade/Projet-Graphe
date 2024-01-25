@@ -81,33 +81,36 @@ public class CameraManager : MonoBehaviour
         uiManager.DesactivateReturnButton();
         uiManager.RemoveUI();
         canMove = false;
-        StartCoroutine(ZoomTo(target.position,target.rotation));
+        StartCoroutine(ZoomTo(target.position,target.rotation,true));
         satelliteManager.selectedSatellite = target.gameObject;
         
     }
 
 
-    private IEnumerator ZoomTo(Vector3 targetPosition, Quaternion targetRotation){
+    private IEnumerator ZoomTo(Vector3 targetPosition, Quaternion targetRotation,bool zoom){
         canZoom = false;
          while (Vector3.Distance(transform.position, targetPosition) > zoomDistance)
         {
             transform.SetPositionAndRotation(Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * zoomRate), Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationRate));
             yield return null;
         }
-        
-        uiManager.Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
-        uiManager.ActivateReturnButton();
+        if (zoom){
+            uiManager.Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+            uiManager.ActivateReturnButton();
+        } else {
+            satelliteManager.selectedSatellite = null;
+            uiManager.RemoveUI();
+            uiManager.DesactivateReturnButton();
+            canMove = true;
+
+        }
         canZoom = true;
     }
 
 
     public void UnZoom(){
-        StartCoroutine(ZoomTo(spawnPosition,Quaternion.identity));
-        satelliteManager.selectedSatellite = null;
-        uiManager.RemoveUI();
-        uiManager.DesactivateReturnButton();
-        canMove = true;
-        canZoom = true;
+        canZoom = false;
+        StartCoroutine(ZoomTo(spawnPosition,Quaternion.identity,false));
     }
 
 }
