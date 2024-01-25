@@ -12,21 +12,21 @@ public class Histogram
         this.abcisses = abcisses;
     }
 
-    public Dictionary<int, int> GenerateHistogram(List<ValueTuple<int,int>> values)
+    public Dictionary<int, int> GenerateHistogram(Dictionary<int,int> values)
     {
         Dictionary<int, int> histogram = new();
         for (int i = 0; i < abcisses.Count - 1; i++)
         {
             histogram.Add(i, 0);
         }
-        foreach (ValueTuple<int,int> tup in values)
+        foreach (KeyValuePair<int,int> kvp in values)
         {
             int index = 0;
-            while (index<abcisses.Count && tup.Item1 < abcisses[index])
+            while (index<abcisses.Count && kvp.Key < abcisses[index])
             {
                 index++;
             }
-            histogram.Add(Mathf.Clamp(index - 1, 0, abcisses.Count - 1), tup.Item2);
+            histogram.Add(Mathf.Clamp(index - 1, 0, abcisses.Count - 1), kvp.Value);
         }
         return histogram;
     }
