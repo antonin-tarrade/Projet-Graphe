@@ -83,7 +83,20 @@ public class ColoredVertex : Vertex<GameObject>
     protected override void SignalUpdate()
     {
         UpdateColor();
+        Satellite satellite = element.GetComponent<Satellite>();
+        satellite.degree = degree;
+        satellite.tailleComposanteConnexe = ConnexComponent().Count;
         base.SignalUpdate();
+    }
+
+    private List<int> ConnexComponent()
+    {
+        List<List<int>> components = graph.connexComponents;
+        foreach (List<int> component in components)
+        {
+            if (component.Contains(graph.IndexOf(element))) return component;
+        }
+        return null;
     }
 
     public override void Destroy()

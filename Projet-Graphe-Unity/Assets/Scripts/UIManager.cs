@@ -52,8 +52,8 @@ public class UIManager : MonoBehaviour
         infoBox.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = sattelite.satelliteName;
         infoBox.GetChild(1).GetComponentInChildren<RawImage>().texture = sattelite.img;
 
-        descriptionBox.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = "Degree" + sattelite.degree;
-        descriptionBox.GetChild(2).GetComponentInChildren<TextMeshProUGUI>().text = "Nombre de composantes connexes" + sattelite.tailleComposanteConnexe;
+        descriptionBox.GetChild(0).GetComponentInChildren<TextMeshProUGUI>().text = "Degree : " + sattelite.degree;
+        descriptionBox.GetChild(2).GetComponentInChildren<TextMeshProUGUI>().text = "Connex component size : " + sattelite.tailleComposanteConnexe;
         UI.transform.SetParent(goBackButton.transform.parent);
         UI.GetComponent<RectTransform>().anchoredPosition = uiPosition;
         displayedUI = UI;

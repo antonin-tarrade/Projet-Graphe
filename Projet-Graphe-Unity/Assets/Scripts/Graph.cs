@@ -43,7 +43,6 @@ public class Vertex<T>
     {
         OnVertexUpdate?.Invoke(this);
     }
-
 }
 
 public class VertexCreator<T>
