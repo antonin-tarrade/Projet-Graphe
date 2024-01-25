@@ -18,6 +18,8 @@ public class CameraManager : MonoBehaviour
     private bool canMove;
     private bool canZoom;
 
+ 
+
 
 
     // Start is called before the first frame update
@@ -57,11 +59,11 @@ public class CameraManager : MonoBehaviour
                 transform.RotateAround(center, transform.right, -Time.deltaTime * speed);
             }
 
-            if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyCode.S))
             {
                 transform.position += speed * Time.deltaTime * (transform.position - center).normalized;
             }
-            if (Input.GetKey(KeyCode.S))
+            if ((Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.W)) && Vector3.Distance(transform.position, center) > 10f)
             {
                 transform.position -= speed * Time.deltaTime * (transform.position - center).normalized;
             }

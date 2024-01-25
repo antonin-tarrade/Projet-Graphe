@@ -22,10 +22,14 @@ public class Satellite : MonoBehaviour
     public static float offset = 0.85f;
     public static float minSize = 0.6f;
     public static float maxSize = 2.5f;
-    
+
+    public Vector3 satelliteRotation;
 
 
-
+    private void Awake()
+    {
+       satelliteRotation = RandomRotation();
+    }
 
     private string RandomString(int length)
     {
@@ -40,12 +44,15 @@ public class Satellite : MonoBehaviour
         return Resources.Load<Texture2D>("Satellites/Satellite" + num);
     }
 
+    private Vector3 RandomRotation() {
+        return new Vector3(Random.Range(0f, 45f), Random.Range(0f, 45f), Random.Range(0f, 45f));
+    }
+
     // Start is called before the first frame update
     void Start()
     {   mainCamera = Camera.main.GetComponent<CameraManager>();
         satelliteName = RandomString(nameLength);
         img = RandomImage((int)Random.Range(1f, 7f));
-        Debug.Log(img);
     }
 
     // Update is called once per frame
@@ -55,7 +62,6 @@ public class Satellite : MonoBehaviour
     }
 
     private void OnMouseEnter() {
-        Debug.Log(satelliteName);
         gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", SatelliteManager.instance.edgeSelectionThickness);
 
     }

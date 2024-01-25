@@ -42,11 +42,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9786c253d09bcb9489a8729e9fa98df0, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9786c253d09bcb9489a8729e9fa98df0, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9786c253d09bcb9489a8729e9fa98df0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -114,6 +114,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   satelliteName: 
-  nameLength: 10
   degree: 0
+  tailleComposanteConnexe: 0
+  img: {fileID: 0}
+  nameLength: 10
   zoomDistance: 30
