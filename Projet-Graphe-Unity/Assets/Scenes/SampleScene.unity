@@ -1383,6 +1383,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 100
+  zoomRate: 0.5
+  zoomDistance: 5
+  rotationRate: 0.5
 --- !u!1 &1055437125
 GameObject:
   m_ObjectHideFlags: 0
