@@ -10,8 +10,9 @@ public class Satellite : MonoBehaviour
 {
 
     public string satelliteName;
-    [SerializeField] private int nameLength;
     public int degree;
+    public int nbComposantesConnexes;
+    [SerializeField] private int nameLength;
     [SerializeField] private float zoomDistance;
     private CameraManager mainCamera;
 

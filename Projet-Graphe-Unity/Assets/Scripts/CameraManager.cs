@@ -10,12 +10,15 @@ public class CameraManager : MonoBehaviour
     public float zoomRate;
     public float zoomDistance;
     public float rotationRate;
+    private Transform spawnPosition;
+    private SatelliteManager satelliteManager;
 
 
     // Start is called before the first frame update
     void Start()
     {
         center = new();
+        satelliteManager = SatelliteManager.instance;
     }
 
     // Update is called once per frame
@@ -47,9 +50,11 @@ public class CameraManager : MonoBehaviour
     public void SetAveragePos(Vector3 position){
         center = position;
         transform.position = center - new Vector3(0,0,100);
+        spawnPosition = transform;
     }
 
     public void GoTo(Transform target){
+        satelliteManager.selectedSatellite = target.gameObject;
         StartCoroutine(ZoomTo(target));
     }
 
@@ -60,6 +65,13 @@ public class CameraManager : MonoBehaviour
             transform.SetPositionAndRotation(Vector3.Lerp(transform.position, target.position, Time.deltaTime * zoomRate), Quaternion.Slerp(transform.rotation, target.rotation, Time.deltaTime * rotationRate));
             yield return null;
         }
+
+    }
+
+
+    public void UnZoom(){
+        GoTo(spawnPosition);
+        satelliteManager.selectedSatellite = null;
     }
 
 }

@@ -23,6 +23,8 @@ public class SatelliteManager : MonoBehaviour
     private TextAsset[] allCsvs;
     [SerializeField] private bool parseWithComma;
 
+    public GameObject selectedSatellite;
+
 
     private List<GameObject> satellites;
 
@@ -38,6 +40,9 @@ public class SatelliteManager : MonoBehaviour
     [SerializeField] private Gradient degreeGradient;
 
     private Vector3 averagePosition;
+    private CameraManager mainCamera;
+
+    public static SatelliteManager instance;
 
     //DEBUG
     public List<ListWrapper<float>> distances;
@@ -48,7 +53,8 @@ public class SatelliteManager : MonoBehaviour
 
     
     private void Awake(){
-
+        instance = this;
+        mainCamera = Camera.main.GetComponent<CameraManager>();
     }
 
     // Start is called before the first frame update
@@ -110,9 +116,7 @@ public class SatelliteManager : MonoBehaviour
 
     public void DisplayFromCsv(int number)
     {
-        CameraManager camera = Camera.main.GetComponent<CameraManager>();
-        camera.transform.position = new Vector3(0,0,0);
-        camera.transform.rotation = Quaternion.identity;
+        mainCamera.transform.SetPositionAndRotation(new Vector3(0,0,0), Quaternion.identity);
         averagePosition = new Vector3(0,0,0);
 
         string csv = allCsvs[number].text;
@@ -141,7 +145,7 @@ public class SatelliteManager : MonoBehaviour
             satellite.transform.position  = pos;
         }
         averagePosition /= lines.Length;
-        camera.SetAveragePos(averagePosition);
+        mainCamera.SetAveragePos(averagePosition);
     }
 
     private bool CompareWithTreshHold(GameObject s1, GameObject s2)
