@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour
 {
@@ -118,13 +119,14 @@ public class UIManager : MonoBehaviour
             abs.Add(i*10);
         }
 
-        Histogram h1 = new Histogram(abs);
+        Histogram h1 = new(abs);
         Dictionary<int, int> histogram1 = h1.GenerateHistogram(satelliteManager.graph.degreeDistribution);
 
         for (int i = 0;i< 10;i++)
         {
             GameObject h = Instantiate(histogramValuePrefab,hist1);
-            h.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, histogram1[i] / 100);
+            h.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (histogram1.TryGetValue(i,out int value) ? value : 0   / 100));
+            Debug.Log(value);
         }
 
         displayedGraphUI = graphUI;
