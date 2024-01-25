@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class CameraManager : MonoBehaviour
 {
@@ -10,8 +11,13 @@ public class CameraManager : MonoBehaviour
     public float zoomRate;
     public float zoomDistance;
     public float rotationRate;
-    private Transform spawnPosition;
+    private Vector3 spawnPosition;
     private SatelliteManager satelliteManager;
+    private UIManager uiManager;
+
+    private bool canMove;
+    private bool canZoom;
+
 
 
     // Start is called before the first frame update
@@ -19,59 +25,89 @@ public class CameraManager : MonoBehaviour
     {
         center = new();
         satelliteManager = SatelliteManager.instance;
+        uiManager = UIManager.instance;
+        spawnPosition = new();
+        canMove = true;
+        canZoom = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.RightArrow)){
-            transform.RotateAround(center,transform.up,-Time.deltaTime * speed);
-        }
+        if (canMove)
+        {
 
-        if (Input.GetKey(KeyCode.UpArrow)){
-            transform.RotateAround(center,transform.right,Time.deltaTime * speed);
-        }
-        if (Input.GetKey(KeyCode.LeftArrow)){
-            transform.RotateAround(center,transform.up,Time.deltaTime * speed);
-        }
 
-        if (Input.GetKey(KeyCode.DownArrow)){
-            transform.RotateAround(center,transform.right,-Time.deltaTime * speed);
-        }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                transform.RotateAround(center, transform.up, -Time.deltaTime * speed);
+            }
 
-        if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.W) ){
-            transform.position += speed * Time.deltaTime * (transform.position - center).normalized;
-        }
-        if (Input.GetKey(KeyCode.S)){
-            transform.position -= speed * Time.deltaTime * (transform.position - center).normalized;
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                transform.RotateAround(center, transform.right, Time.deltaTime * speed);
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                transform.RotateAround(center, transform.up, Time.deltaTime * speed);
+            }
+
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                transform.RotateAround(center, transform.right, -Time.deltaTime * speed);
+            }
+
+            if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.W))
+            {
+                transform.position += speed * Time.deltaTime * (transform.position - center).normalized;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                transform.position -= speed * Time.deltaTime * (transform.position - center).normalized;
+            }
+
         }
     }
 
     public void SetAveragePos(Vector3 position){
         center = position;
         transform.position = center - new Vector3(0,0,100);
-        spawnPosition = transform;
+        spawnPosition = transform.position;
+
     }
 
     public void GoTo(Transform target){
+        if (!canZoom) { return; }
+        uiManager.DesactivateReturnButton();
+        uiManager.RemoveUI();
+        canMove = false;
+        StartCoroutine(ZoomTo(target.position,target.rotation));
         satelliteManager.selectedSatellite = target.gameObject;
-        StartCoroutine(ZoomTo(target));
+        
     }
 
 
-    private IEnumerator ZoomTo(Transform target){
-         while (Vector3.Distance(transform.position, target.position) > zoomDistance)
+    private IEnumerator ZoomTo(Vector3 targetPosition, Quaternion targetRotation){
+        canZoom = false;
+         while (Vector3.Distance(transform.position, targetPosition) > zoomDistance)
         {
-            transform.SetPositionAndRotation(Vector3.Lerp(transform.position, target.position, Time.deltaTime * zoomRate), Quaternion.Slerp(transform.rotation, target.rotation, Time.deltaTime * rotationRate));
+            transform.SetPositionAndRotation(Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * zoomRate), Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationRate));
             yield return null;
         }
-
+        
+        uiManager.Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+        uiManager.ActivateReturnButton();
+        canZoom = true;
     }
 
 
     public void UnZoom(){
-        GoTo(spawnPosition);
+        StartCoroutine(ZoomTo(spawnPosition,Quaternion.identity));
         satelliteManager.selectedSatellite = null;
+        uiManager.RemoveUI();
+        uiManager.DesactivateReturnButton();
+        canMove = true;
+        canZoom = true;
     }
 
 }

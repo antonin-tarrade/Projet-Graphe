@@ -120,6 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   satelliteName: 
-  nameLength: 10
   degree: 0
+  nbComposantesConnexes: 0
+  img: {fileID: 0}
+  nameLength: 8
   zoomDistance: 30
