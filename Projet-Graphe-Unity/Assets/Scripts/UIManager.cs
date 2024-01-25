@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         satelliteManager = SatelliteManager.instance;
+        satelliteManager.OnGraphChanged += UpdateUI;
         goBackButton.SetActive(false);
     }
 
@@ -38,6 +39,15 @@ public class UIManager : MonoBehaviour
     void Update()
     {
       
+    }
+
+    public void UpdateUI()
+    {
+        if (displayedUI != null)
+        {
+            RemoveUI();
+            Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+        }
     }
 
 

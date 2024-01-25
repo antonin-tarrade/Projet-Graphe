@@ -29,6 +29,7 @@ public class SatelliteManager : MonoBehaviour
     private List<GameObject> satellites;
 
     private Graph<GameObject> graph;
+    public Action OnGraphChanged;
 
 
     public float treshold;
@@ -173,7 +174,7 @@ public class SatelliteManager : MonoBehaviour
             distances.Add(new(new(tab)));
         foreach (bool[] tab in graph.adjacenceMatrix)
             adjacence.Add(new(new(tab)));
-
+        OnGraphChanged?.Invoke();
     }
 
     private Vector3 ParsePositions(string[] line){

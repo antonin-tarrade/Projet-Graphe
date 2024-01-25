@@ -19,9 +19,9 @@ public class Satellite : MonoBehaviour
     private CameraManager mainCamera;
 
     public static float cameraDistanceFactor = 0.01f;
-    public static float offset = 0.75f;
-    public static float minSize = 0.5f;
-    public static float maxSize = 2f;
+    public static float offset = 0.85f;
+    public static float minSize = 0.6f;
+    public static float maxSize = 2.5f;
     
 
 

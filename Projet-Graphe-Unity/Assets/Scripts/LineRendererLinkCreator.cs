@@ -50,7 +50,7 @@ public class ColoredVertex : Vertex<GameObject>
         meshRenderer.SetMaterials(
             new List<Material>(
                 new Material[]
-                { meshFilters[0].GetComponent<MeshRenderer>().sharedMaterial, Resources.Load<Material>("OutlineMat") }));
+                { Resources.Load<Material>("SatMat"), Resources.Load<Material>("OutlineMat") }));
         //meshRenderer.materials[1].SetFloat("_Float", 0);
 
         element.transform.position = pos;

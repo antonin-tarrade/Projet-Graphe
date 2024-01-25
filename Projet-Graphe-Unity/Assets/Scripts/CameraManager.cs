@@ -81,17 +81,18 @@ public class CameraManager : MonoBehaviour
         uiManager.DesactivateReturnButton();
         uiManager.RemoveUI();
         canMove = false;
-        StartCoroutine(ZoomTo(target.position,target.rotation,true));
+        StartCoroutine(ZoomTo(target.position,target.position,true));
         satelliteManager.selectedSatellite = target.gameObject;
         
     }
 
 
-    private IEnumerator ZoomTo(Vector3 targetPosition, Quaternion targetRotation,bool zoom){
+    private IEnumerator ZoomTo(Vector3 targetPosition, Vector3 targetView, bool zoom){
         canZoom = false;
-         while (Vector3.Distance(transform.position, targetPosition) > zoomDistance)
+         while (Vector3.Distance(transform.position, targetPosition) > zoomDistance || ((targetView - transform.position).normalized - transform.forward.normalized).sqrMagnitude > 0.01)
         {
-            transform.SetPositionAndRotation(Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * zoomRate), Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationRate));
+            Quaternion lookAt = Quaternion.LookRotation(targetView - transform.position);
+            transform.SetPositionAndRotation(Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * zoomRate), Quaternion.Slerp(transform.rotation, lookAt, Time.deltaTime * rotationRate));
             yield return null;
         }
         if (zoom){
@@ -99,8 +100,7 @@ public class CameraManager : MonoBehaviour
             uiManager.ActivateReturnButton();
         } else {
             satelliteManager.selectedSatellite = null;
-            uiManager.RemoveUI();
-            uiManager.DesactivateReturnButton();
+            
             canMove = true;
 
         }
@@ -109,8 +109,10 @@ public class CameraManager : MonoBehaviour
 
 
     public void UnZoom(){
+        uiManager.RemoveUI();
+        uiManager.DesactivateReturnButton();
         canZoom = false;
-        StartCoroutine(ZoomTo(spawnPosition,Quaternion.identity,false));
+        StartCoroutine(ZoomTo(spawnPosition, center ,false));
     }
 
 }
