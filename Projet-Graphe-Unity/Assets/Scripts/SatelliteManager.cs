@@ -74,7 +74,7 @@ public class SatelliteManager : MonoBehaviour
         
         if (selectedSatellite != null)
         {
-            selectedSatellite.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", SatelliteManager.instance.edgeSelectionThickness);
+            selectedSatellite.GetComponent<Satellite>().AddOutlines();
         }
 
     }
@@ -171,6 +171,9 @@ public class SatelliteManager : MonoBehaviour
         }
         return pos;
     }
+
+
+
 }
 
 

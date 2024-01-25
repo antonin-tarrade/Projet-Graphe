@@ -84,7 +84,6 @@ public class CameraManager : MonoBehaviour
         uiManager.RemoveUI();
         canMove = false;
         StartCoroutine(ZoomTo(target.position,target.position,true));
-        satelliteManager.selectedSatellite = target.gameObject;
         
     }
 
@@ -101,6 +100,7 @@ public class CameraManager : MonoBehaviour
             uiManager.Display(satelliteManager.selectedSatellite.GetComponent<Satellite>());
             uiManager.ActivateReturnButton();
         } else {
+            satelliteManager.selectedSatellite.GetComponent<Satellite>().RemoveOutlines();
             satelliteManager.selectedSatellite = null;
             
             canMove = true;

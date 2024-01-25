@@ -6,6 +6,7 @@ using static System.Random;
 using UnityEditor.ShaderGraph.Internal;
 using Unity.VisualScripting;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Satellite : MonoBehaviour
 {
@@ -62,16 +63,27 @@ public class Satellite : MonoBehaviour
     }
 
     private void OnMouseEnter() {
-        gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", SatelliteManager.instance.edgeSelectionThickness);
+        AddOutlines();
 
     }
 
     private void OnMouseExit() {
-        gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float",0f);
+        RemoveOutlines();
     }
 
 
     private void OnMouseDown() {
-       mainCamera.GoTo(transform);
+        SatelliteManager.instance.selectedSatellite = gameObject;
+        mainCamera.GoTo(transform);
+    }
+
+    public void AddOutlines()
+    {
+        GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", SatelliteManager.instance.edgeSelectionThickness);
+    }
+
+    public void RemoveOutlines()
+    {
+        GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", 0f);
     }
 }
