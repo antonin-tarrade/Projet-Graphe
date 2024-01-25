@@ -23,11 +23,11 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 1.23
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
-  m_HaloStrength: 0.5
+  m_SubtractiveShadowColor: {r: 0.31305623, g: 0.40334457, b: 0.6320754, a: 1}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 42cd6a2a63c7cdc44853186d2f4414b4, type: 2}
+  m_HaloStrength: 0.449
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
@@ -1623,7 +1623,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.25
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -2819,19 +2819,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2b599fef34f7427cb95615fe4b28fc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  satellitePrefab: {fileID: 7217370922280275294, guid: 1a07e8de974c34df9887f43cadb6e99d, type: 3}
+  satellitePrefab: {fileID: 8690310736756841797, guid: 62db1f9e11bbe7b43b8c45fe475ecde0, type: 3}
   csvToLoad: 2
   ratio: 500
   parseWithComma: 0
   selectedSatellite: {fileID: 0}
   treshold: 0
   satelliteLink: {fileID: 1055437126}
+  edgeSelectionThickness: 1.1
   calculate: 0
   destroyComputer: 0
   degreeGradient:
     serializedVersion: 2
-    key0: {r: 0.45376468, g: 0.87664133, b: 0.9716981, a: 1}
-    key1: {r: 1, g: 0, b: 0.018810749, a: 1}
+    key0: {r: 0.4296875, g: 0, b: 1, a: 1}
+    key1: {r: 1, g: 0, b: 0.020576, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}

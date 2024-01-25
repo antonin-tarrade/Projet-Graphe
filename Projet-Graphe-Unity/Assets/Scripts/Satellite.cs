@@ -18,6 +18,12 @@ public class Satellite : MonoBehaviour
     [SerializeField] private float zoomDistance;
     private CameraManager mainCamera;
 
+    public static float cameraDistanceFactor = 0.01f;
+    public static float offset = 0.75f;
+    public static float minSize = 0.5f;
+    public static float maxSize = 2f;
+    
+
 
 
 
@@ -45,17 +51,17 @@ public class Satellite : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        transform.localScale = offset * Mathf.Clamp((Vector3.Distance(transform.position, Camera.main.transform.position)) * cameraDistanceFactor, minSize, maxSize) * Vector3.one ;
     }
 
     private void OnMouseEnter() {
         Debug.Log(satelliteName);
-        gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float",1.2f);
+        gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", SatelliteManager.instance.edgeSelectionThickness);
 
     }
 
     private void OnMouseExit() {
-        gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float",1f);
+        gameObject.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float",0f);
     }
 
 

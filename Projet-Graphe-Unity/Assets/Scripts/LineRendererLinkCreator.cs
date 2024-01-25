@@ -11,14 +11,61 @@ public class ColoredVertex : Vertex<GameObject>
 
     public ColoredVertex(GameObject element, Graph<GameObject> graph, Gradient gradient) : base(element, graph)
     {
-        mesh = element.GetComponent<MeshRenderer>();
+        if (!element.TryGetComponent<MeshRenderer>(out mesh))
+        {
+            CombineMeshes();
+            mesh = element.GetComponent<MeshRenderer>();
+        }
         this.gradient = gradient;
         graph.OnGraphCreated += SignalUpdate;
     }
 
+    private void CombineMeshes()
+    {
+        Vector3 pos = element.transform.position;
+        Quaternion rot = element.transform.rotation;
+
+        element.transform.position = Vector3.zero;
+        element.transform.rotation = Quaternion.identity;
+
+        MeshFilter[] meshFilters = element.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; i++)
+        {
+            combine[i].mesh = (meshFilters[i].sharedMesh);
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false); 
+        }
+
+        Mesh combinedMesh = new Mesh();
+        combinedMesh.CombineMeshes(combine, true);
+        combinedMesh.name = element.name + "Mesh";
+
+        MeshFilter meshFilter = element.gameObject.AddComponent<MeshFilter>();
+        meshFilter.sharedMesh = combinedMesh;
+
+        MeshRenderer meshRenderer = element.gameObject.AddComponent<MeshRenderer>();
+        //meshRenderer.material = meshFilters[0].GetComponent<MeshRenderer>().sharedMaterial;
+        meshRenderer.SetMaterials(
+            new List<Material>(
+                new Material[]
+                { meshFilters[0].GetComponent<MeshRenderer>().sharedMaterial, Resources.Load<Material>("OutlineMat") }));
+        //meshRenderer.materials[1].SetFloat("_Float", 0);
+
+        element.transform.position = pos;
+        element.transform.rotation = rot;
+
+
+        foreach (MeshFilter filter in meshFilters)
+        {
+            GameObject.Destroy(filter.gameObject);
+        }
+
+    }
+
     public void UpdateColor()
     {
-
         if (graph.maxDegree > 0) mesh.material.color = gradient.Evaluate((float)(degree - graph.minDegree) / (float)(graph.maxDegree - graph.minDegree));
         else mesh.material.color = Color.white;
     }
