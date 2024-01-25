@@ -18,6 +18,8 @@ public class CameraManager : MonoBehaviour
     private bool canMove;
     private bool canZoom;
 
+ 
+
 
 
     // Start is called before the first frame update

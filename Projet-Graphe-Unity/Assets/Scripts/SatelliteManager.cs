@@ -70,26 +70,11 @@ public class SatelliteManager : MonoBehaviour
 
     private void Update()
     {
-        // if (calculate)
-        // {
-        //     ConstructGraph();
-        //     calculate = false;
-        // }
-        // if (hideEdges)
-        // {
-        //     graph.HideLinks();
-        //     hideEdges = false;
-        // }
-        // if (showEdges)
-        // {
-        //     graph.ShowLinks();
-        //     showEdges = false;
-        // }
-        //if (destroyComputer)
-        //{
-        //    graph.CalculateClicks();
-        //    Debug.Log(graph.clicks.Count);
-        //}
+        
+        if (selectedSatellite != null)
+        {
+            selectedSatellite.GetComponent<MeshRenderer>().materials[1].SetFloat("_Float", SatelliteManager.instance.edgeSelectionThickness);
+        }
 
     }
 
@@ -142,7 +127,7 @@ public class SatelliteManager : MonoBehaviour
 
             Vector3 pos = ParsePositions(positions);
             averagePosition += pos;
-            satellite.transform.position  = pos;
+            satellite.transform.SetPositionAndRotation(pos, Quaternion.Euler(satellite.GetComponent<Satellite>().satelliteRotation));
         }
         averagePosition /= lines.Length;
         mainCamera.SetAveragePos(averagePosition);
