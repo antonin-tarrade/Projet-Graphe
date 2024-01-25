@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
 
     public GameObject graphInfo;
 
-    public GameObject histogramPrefab;
+    public GameObject histogramValuePrefab;
 
 
     [SerializeField] private Vector2 uiPosition;
@@ -24,7 +24,9 @@ public class UIManager : MonoBehaviour
 
     private SatelliteManager satelliteManager;
 
-    private GameObject displayedUI;
+    private GameObject displayedSatelliteUI;
+    private GameObject displayedGraphUI;
+
 
 
 
@@ -51,7 +53,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        if (displayedUI != null)
+        if (displayedSatelliteUI != null)
         {
             RemoveSatelliteUI();
             DisplaySatelliteUI(satelliteManager.selectedSatellite.GetComponent<Satellite>());
@@ -74,13 +76,13 @@ public class UIManager : MonoBehaviour
         descriptionBox.GetChild(2).GetComponentInChildren<TextMeshProUGUI>().text = "Connex component size : " + sattelite.tailleComposanteConnexe;
         UI.transform.SetParent(goBackButton.transform.parent);
         UI.GetComponent<RectTransform>().anchoredPosition = uiPosition;
-        displayedUI = UI;
+        displayedSatelliteUI = UI;
     }
 
     public void RemoveSatelliteUI()
     {
-        Destroy(displayedUI);
-        displayedUI = null;
+        Destroy(displayedSatelliteUI);
+        displayedSatelliteUI = null;
     }
 
     public void ActivateReturnButton()
@@ -110,8 +112,30 @@ public class UIManager : MonoBehaviour
         meanBox.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Mean Degree : " + satelliteManager.graph.meanDegree;
         meanBox.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Mean Clustering Degree : " + satelliteManager.graph.meanClusterDegree;
 
-        Histogram h1 = new Histogram();
+        List<int> abs = new List<int>();
+        for (int i = 0; i< 10; i++)
+        {
+            abs.Add(i*10);
+        }
 
+        Histogram h1 = new Histogram(abs);
+        Dictionary<int, int> histogram1 = h1.GenerateHistogram(satelliteManager.graph.degreeDistribution);
+
+        for (int i = 0;i< 10;i++)
+        {
+            GameObject h = Instantiate(histogramValuePrefab,hist1);
+            h.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, histogram1[i] / 100);
+        }
+
+        displayedGraphUI = graphUI;
+
+    }
+
+
+    public void RemoveGraphUI()
+    {
+        Destroy(displayedGraphUI);
+        displayedGraphUI = null;
     }
 
 
