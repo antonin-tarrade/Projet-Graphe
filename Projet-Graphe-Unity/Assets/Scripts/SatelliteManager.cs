@@ -52,9 +52,6 @@ public class SatelliteManager : MonoBehaviour
     // DEBUG
     public bool clearall = false;
 
-    public static SatelliteManager instance;
-
-    
     private void Awake(){
         instance = this;
         mainCamera = Camera.main.GetComponent<CameraManager>();
