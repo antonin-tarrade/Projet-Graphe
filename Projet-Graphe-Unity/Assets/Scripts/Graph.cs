@@ -141,6 +141,7 @@ public class Graph<T>
     public Dictionary<int,int> degreeDistribution { get; private set; }
     public Dictionary<int,int> clusteringDegreeDistribution { get; private set; }
     public List<List<int>> connexComponents { get; private set; }
+    public Dictionary<int,int> connexComponentsDistribution { get; private set; }
     public ISet<ISet<int>> clicks { get; private set; }
     public int meanDegree { get => vertices.Aggregate(0, (s, elem) => s + elem.degree) / order; }
     public int maxDegree { get => degreeDistribution.Keys.Max(); }
@@ -196,12 +197,11 @@ public class Graph<T>
         adjacenceMatrix = CalculateAdjacenceMatrix();
         CreateLinks();
         shortestDistanceMatrix = CalculateShortestDistanceMatrix(adjacenceMatrix, edgeMatrix);
-        
         clusteringMatrix = CalculateClusteringMatrix();
         degreeDistribution = CalculateDegreeDistribution(adjacenceMatrix);
         clusteringDegreeDistribution = CalculateDegreeDistribution(clusteringMatrix);
         connexComponents = CalculateConnexComponents(adjacenceMatrix);
-
+        connexComponentsDistribution = CalculateConnexComponentsDistribution(connexComponents);
         
 
         OnGraphCreated?.Invoke();     
@@ -331,6 +331,17 @@ public class Graph<T>
             components.Add(component);
         }
         return components;
+    }
+
+    private Dictionary<int,int> CalculateConnexComponentsDistribution(List<List<int>> components)
+    {
+        Dictionary<int, int> distrib = new();
+        foreach (List<int> l in components)
+        {
+            if (distrib.TryGetValue(l.Count, out int v)) distrib[l.Count] = v+1;
+            else distrib.Add(l.Count,1);
+        }
+        return distrib;
     }
 
     //private ISet<ISet<int>> CalculateClicks(bool[][] matrix)
