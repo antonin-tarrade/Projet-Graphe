@@ -31,6 +31,7 @@ public class SatelliteManager : MonoBehaviour
 
     public float treshold;
     public LineRenderer satelliteLink;
+    public float edgeSelectionThickness;
 
     public bool calculate = false;
     public bool destroyComputer = false;
@@ -46,9 +47,11 @@ public class SatelliteManager : MonoBehaviour
     // DEBUG
     public bool clearall = false;
 
+    public static SatelliteManager instance;
+
     
     private void Awake(){
-
+        instance = this;
     }
 
     // Start is called before the first frame update
