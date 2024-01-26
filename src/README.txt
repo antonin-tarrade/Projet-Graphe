@@ -1,1 +1,0 @@
-Pour le calcul des caractéristiques du graphe, le seul fichier pertinent à regarder dans le code source est la classe Graph située dans le fichier Graph.cs, où sont contenues toutes les fonctions de calcul. Le reste des fichiers est relatif à Unity et au traitement graphique et ne montre pas de pertinence pour l'aspect théorique des graphes.
