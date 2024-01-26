@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class CustomSceneManager : MonoBehaviour
 {
+
+    public static CustomSceneManager instance;
+
+    private void Awake()
+    {
+        if (instance != null) Destroy(instance.gameObject); 
+        instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {

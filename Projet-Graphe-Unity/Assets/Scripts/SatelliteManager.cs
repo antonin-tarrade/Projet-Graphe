@@ -139,7 +139,7 @@ public class SatelliteManager : MonoBehaviour
         => Vector3.Distance(s1.transform.position, s2.transform.position) < treshold * 1000 / ratio;
 
     private float Distance(GameObject s1, GameObject s2)
-        => Vector3.Distance(s1.transform.position, s2.transform.position) * 1000 / ratio;
+        => Vector3.Distance(s1.transform.position, s2.transform.position) * ratio / 1000;
 
     private float SquaredDistance(GameObject s1, GameObject s2)
         => Mathf.Pow(Distance(s1,s2), 2);

@@ -68,7 +68,7 @@ public class UIManager : MonoBehaviour
         if (displayedSatelliteUI != null)
         {
             RemoveSatelliteUI();
-            DisplaySatelliteUI(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+            if (satelliteManager.selectedSatellite != null) DisplaySatelliteUI(satelliteManager.selectedSatellite.GetComponent<Satellite>());
         }
     }
 
