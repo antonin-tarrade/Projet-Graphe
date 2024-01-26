@@ -104,6 +104,7 @@ public class SatelliteManager : MonoBehaviour
     {
         mainCamera.transform.SetPositionAndRotation(new Vector3(0,0,0), Quaternion.identity);
         uiManager.DesactivateReturnButton();
+        uiManager.RemoveSatelliteUI();
         averagePosition = new Vector3(0,0,0);
 
         string csv = allCsvs[number].text;
