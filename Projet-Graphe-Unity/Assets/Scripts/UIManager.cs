@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour
@@ -12,6 +15,7 @@ public class UIManager : MonoBehaviour
     public GameObject satteliteUIPrefab;
     public GameObject goBackButton;
     public GameObject infoButton;
+    public GameObject squareButton;
 
 
     public static UIManager instance;
@@ -116,6 +120,12 @@ public class UIManager : MonoBehaviour
         Transform hist4 = histBox.transform.GetChild(3).GetChild(1).GetChild(0).GetChild(0);
         Transform meanBox = infoBox.transform.GetChild(1);
 
+        Transform hist1s = histBox.transform.GetChild(0).GetChild(1);
+        Transform hist2s = histBox.transform.GetChild(1).GetChild(1);
+        Transform hist3s = histBox.transform.GetChild(2).GetChild(1);
+        Transform hist4s = histBox.transform.GetChild(3).GetChild(1);
+
+
         meanBox.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Mean Degree : " + satelliteManager.graph.meanDegree;
         meanBox.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Mean Clustering Degree : " + satelliteManager.graph.meanClusterDegree;
 
@@ -130,17 +140,99 @@ public class UIManager : MonoBehaviour
         Dictionary<int, int> hcon = h1.GenerateHistogram(satelliteManager.graph.connexComponentsDistribution);
         Dictionary<int, int> hclu = h1.GenerateHistogram(satelliteManager.graph.clusteringDegreeDistribution);
 
+        List<int> abs2 = new();
+
+        int multnumber = satelliteManager.squaredDistance ? 5000 : 100;
+
+        for (int i = 0; i<= 10; i++)
+        {
+            abs2.Add(i*multnumber);
+        }
+
+        Histogram h2 = new(abs2);
+        Transform absic = hist1s.GetChild(1);
+        Transform ordc = hist1s.GetChild(0).GetChild(1);
+
+
+
+        for(int i = 0; i < absic.childCount; i++){
+            absic.GetChild(i).GetComponentInChildren<TextMeshProUGUI>().text = abs2[i].ToString();
+        }
+        int n = satelliteManager.graph.order;
+        List<float> distrib = new List<float>();
+        for (int i = 0; i<n; i++){
+            for (int j = i+1; j<n; j++){
+                float dist = satelliteManager.graph.shortestDistanceMatrix[i][j];
+                if ((dist != float.PositiveInfinity)) {
+                    distrib.Add(dist);
+                }
+                
+            } 
+        }
+
+        Dictionary<float, int> hsp = h2.GenerateHistogram(distrib.ToArray());
+
+        List<Dictionary<int,int>> allDict = new()
+        {
+            hdeg,
+            hcon,
+            hclu
+        };
+        List<List<float>> allOrd = new ();
+
+        List<int> allMax = new();
+
+        List<Transform> allTrans = new(){
+            hist3s.GetChild(0).GetChild(1),
+            hist2s.GetChild(0).GetChild(1),
+            hist4s.GetChild(0).GetChild(1)
+        };
+
+        foreach (Dictionary<int,int> d in allDict){
+            List<float> l = new();
+            int max = d.Values.Max();
+
+            for (float i = 1; i <= 5; i++)
+            {
+                l.Add(i * max/5);
+            }
+            allMax.Add(max);
+            allOrd.Add(l);
+        }
+
+        for(int i = 0 ; i< allTrans.Count; i++ ){
+            for(int j = 0; j < allTrans[i].childCount; j++){
+                allTrans[i].GetChild(j).GetComponentInChildren<TextMeshProUGUI>().text = allOrd[i][j].ToString();
+            }
+        }
+
+        int maxOrd = hsp.Values.Max();
+        List<int> ord = new();
+        for (int i = 0; i<= 10; i++)
+        {
+            ord.Add(i * maxOrd/10);
+        }
+
+        for(int i = 0; i < ordc.childCount; i++){
+            ordc.GetChild(i).GetComponentInChildren<TextMeshProUGUI>().text = ord[i].ToString();
+        }
+
 
         for (int i = 0;i< 10;i++)
         {
-            GameObject hd = Instantiate(histogramValuePrefab,hist1);
-            hd.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hdeg.TryGetValue(i,out int value1) ? value1 * 2.5f : 0);
+            GameObject hd = Instantiate(histogramValuePrefab,hist3);
+            hd.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hdeg.TryGetValue(i,out int value1) ? (float) value1 * 250 / allMax[0] : 0);
 
             GameObject hco = Instantiate(histogramValuePrefab, hist2);
-            hco.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hcon.TryGetValue(i, out int value2) ? value2 * 5f : 0);
+            hco.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hcon.TryGetValue(i, out int value2) ? (float) value2 * 250 / allMax[1] : 0);
+
+            GameObject hs = Instantiate(histogramValuePrefab, hist1);
+            hs.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hsp.TryGetValue(i, out int value3) ? (float) value3 * 250 / maxOrd : 0);
+
 
             GameObject hcl = Instantiate(histogramValuePrefab, hist4);
-            hcl.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hclu.TryGetValue(i, out int value4) ? value4 * 2.5f : 0);
+            hcl.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hclu.TryGetValue(i, out int value4) ? (float) value4 * 250 / allMax[2] : 0);
+
 
         }
 
@@ -177,6 +269,19 @@ public class UIManager : MonoBehaviour
             
 
         }
+    }
+
+
+
+    public void ChangeSquare(){
+        if (!satelliteManager.squaredDistance){
+            satelliteManager.squaredDistance = true;
+            squareButton.GetComponentInChildren<TextMeshProUGUI>().text = "Apply normal";
+        } else {
+            satelliteManager.squaredDistance = false;
+            squareButton.GetComponentInChildren<TextMeshProUGUI>().text = "Apply Square";
+        }
+        satelliteManager.ConstructGraph();
     }
 
 
