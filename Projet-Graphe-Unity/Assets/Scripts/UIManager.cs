@@ -140,9 +140,6 @@ public class UIManager : MonoBehaviour
 
             GameObject hcl = Instantiate(histogramValuePrefab, hist3);
             hcl.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hclu.TryGetValue(i, out int value3) ? value3 * 3 : 0));
-            Debug.Log("Degree: " + value1);
-            Debug.Log("Connex : " + value2);
-            Debug.Log("Clustering : " + value3);
         }
 
         displayedGraphUI = graphUI;

@@ -39,16 +39,6 @@ public class SatelliteManager : MonoBehaviour
 
     public UIManager uiManager;
 
-    //DEBUG
-    public List<ListWrapper<float>> distances;
-    public List<ListWrapper<bool>> cluster;
-    public List<int> d1;
-    public List<int> d2;
-    public List<int> c1;
-    public List<int> c2;
-
-    // DEBUG
-    public bool clearall = false;
 
     private void Awake(){
         instance = this;
