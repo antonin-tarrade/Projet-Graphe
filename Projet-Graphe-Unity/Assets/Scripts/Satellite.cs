@@ -18,6 +18,8 @@ public class Satellite : MonoBehaviour
     [SerializeField] private float zoomDistance;
     private CameraManager mainCamera;
 
+    public bool selected = false;
+
     public static float cameraDistanceFactor = 0.01f;
     public static float offset = 0.85f;
     public static float minSize = 0.6f;
@@ -67,13 +69,21 @@ public class Satellite : MonoBehaviour
     }
 
     private void OnMouseExit() {
-        RemoveOutlines();
+        if (!selected) RemoveOutlines();
     }
 
 
     private void OnMouseDown() {
         SatelliteManager.instance.selectedSatellite = gameObject;
         mainCamera.GoTo(transform);
+    }
+
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        { 
+            SatelliteManager.instance.OnRightClick(this);
+        }
     }
 
     public void AddOutlines()

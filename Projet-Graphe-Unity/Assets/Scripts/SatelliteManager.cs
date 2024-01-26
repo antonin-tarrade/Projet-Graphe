@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class SatelliteManager : MonoBehaviour
 
     public GameObject selectedSatellite;
 
+    public ValueTuple<GameObject, GameObject> selectedSatellites = (null,null);
+    public float distance = 0f;
 
     private List<GameObject> satellites;
 
@@ -166,6 +169,31 @@ public class SatelliteManager : MonoBehaviour
             pos[i] = float.Parse(positions[i])/ratio;
         }
         return pos;
+    }
+
+    public void OnRightClick(Satellite s)
+    {
+        s.selected = true;
+        s.AddOutlines();
+        s.GetComponent<MeshRenderer>().materials[1].color = Color.green;
+        if (selectedSatellites.Item1 != null)
+        {
+            selectedSatellites.Item1.GetComponent<MeshRenderer>().materials[1].color = Resources.Load<Material>("OutlineMat").color;
+            selectedSatellites.Item1.GetComponent<Satellite>().RemoveOutlines();
+            selectedSatellites.Item1.GetComponent<Satellite>().selected = false;
+        }
+        selectedSatellites.Item1 = selectedSatellites.Item2;
+        selectedSatellites.Item2 = s.gameObject;
+        if (selectedSatellites.Item1 != null && selectedSatellites.Item2 !=null)
+        {
+            distance = GetDistance(selectedSatellites.Item1, selectedSatellites.Item2);
+            UIManager.instance.UpdateDistanceUI();
+        } 
+    }
+
+    public float GetDistance(GameObject s1, GameObject s2)
+    {
+        return graph.shortestDistanceMatrix[graph.IndexOf(s1)][graph.IndexOf(s2)];
     }
 
 

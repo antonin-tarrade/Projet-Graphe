@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     public GameObject goBackButton;
     public GameObject infoButton;
     public GameObject squareButton;
+    public TextMeshProUGUI distanceButton;
 
 
     public static UIManager instance;
@@ -51,6 +52,7 @@ public class UIManager : MonoBehaviour
     {
         satelliteManager = SatelliteManager.instance;
         satelliteManager.OnGraphChanged += UpdateUI;
+        satelliteManager.OnGraphChanged += UpdateDistanceUI;
         goBackButton.SetActive(false);
         isGraphUIDisplayed = false;
     }
@@ -67,6 +69,17 @@ public class UIManager : MonoBehaviour
         {
             RemoveSatelliteUI();
             DisplaySatelliteUI(satelliteManager.selectedSatellite.GetComponent<Satellite>());
+        }
+    }
+
+    public void UpdateDistanceUI()
+    {
+       if (satelliteManager.selectedSatellites.Item1 != null && satelliteManager.selectedSatellites.Item2)
+        {
+            string n1 = satelliteManager.selectedSatellites.Item1.GetComponent<Satellite>().satelliteName;
+            string n2 = satelliteManager.selectedSatellites.Item2.GetComponent<Satellite>().satelliteName;
+            string dist = satelliteManager.distance.ToString();
+            distanceButton.text = n1 + " -> " + n2 + " : " + dist;
         }
     }
 

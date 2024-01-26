@@ -168,6 +168,12 @@ public class Graph<T>
     public int IndexOf (T element) => 
         (refs.TryGetValue(element, out Vertex<T> value))? vertices.IndexOf(value) : -1;
 
+    public int DegreeOf(T element) =>
+        refs.TryGetValue(element, out Vertex<T> value) ? value.degree : -1;
+
+    public int DegreeOf(int i) =>
+        vertices[i].degree;
+
 
     private void Add(T element)
     {
