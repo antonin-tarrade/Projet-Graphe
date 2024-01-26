@@ -175,7 +175,7 @@ public class UIManager : MonoBehaviour
 
         List<int> abs2 = new();
 
-        int multnumber = satelliteManager.squaredDistance ? 5000 : 100;
+        int multnumber = satelliteManager.squaredDistance ? 500 : 30;
 
         for (int i = 0; i<= 10; i++)
         {
