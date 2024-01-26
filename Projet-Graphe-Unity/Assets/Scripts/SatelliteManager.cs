@@ -46,6 +46,9 @@ public class SatelliteManager : MonoBehaviour
 
     public static SatelliteManager instance;
 
+
+    public UIManager uiManager;
+
     //DEBUG
     public List<ListWrapper<float>> distances;
     public List<ListWrapper<bool>> adjacence;
@@ -61,6 +64,7 @@ public class SatelliteManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        uiManager = UIManager.instance;
         satellites = new List<GameObject>();
         allCsvs = Resources.LoadAll<TextAsset>("Csv");
         csvToLoad = 0;
@@ -147,6 +151,12 @@ public class SatelliteManager : MonoBehaviour
 
     public void ConstructGraph()
     {
+
+        if (uiManager.isGraphUIDisplayed)
+        {
+            uiManager.UpdateGraphUI();
+        }
+
         Graph<GameObject>.GetGraph(
             ref graph, 
             CompareWithTreshHold, 

@@ -22,7 +22,7 @@ public class Histogram
         foreach (KeyValuePair<int,int> kvp in values)
         {
             int index = 0;
-            while (index<abcisses.Count && kvp.Key < abcisses[index])
+            while (index<abcisses.Count && kvp.Key > abcisses[index])
             {
                 index++;
             }

@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour
 
     public GameObject satteliteUIPrefab;
     public GameObject goBackButton;
+    public GameObject infoButton;
+
 
     public static UIManager instance;
 
@@ -28,6 +30,8 @@ public class UIManager : MonoBehaviour
     private GameObject displayedSatelliteUI;
     private GameObject displayedGraphUI;
 
+    public bool isGraphUIDisplayed;
+
 
 
 
@@ -44,6 +48,7 @@ public class UIManager : MonoBehaviour
         satelliteManager = SatelliteManager.instance;
         satelliteManager.OnGraphChanged += UpdateUI;
         goBackButton.SetActive(false);
+        isGraphUIDisplayed = false;
     }
 
     // Update is called once per frame
@@ -105,10 +110,10 @@ public class UIManager : MonoBehaviour
         graphUI.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f, 0f);
         Transform mainUI = graphUI.transform.GetChild(1);
         Transform infoBox = mainUI.transform.GetChild(1);
-        Transform hist1 = infoBox.transform.GetChild(0);
-        Transform hist2 = infoBox.transform.GetChild(1);
+        Transform hist1 = infoBox.transform.GetChild(0).GetChild(1);
+        Transform hist2 = infoBox.transform.GetChild(1).GetChild(1);
         Transform meanBox = infoBox.transform.GetChild(2);
-        Transform hist3 = infoBox.transform.GetChild(3);
+        Transform hist3 = infoBox.transform.GetChild(3).GetChild(1);
 
         meanBox.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Mean Degree : " + satelliteManager.graph.meanDegree;
         meanBox.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Mean Clustering Degree : " + satelliteManager.graph.meanClusterDegree;
@@ -120,13 +125,24 @@ public class UIManager : MonoBehaviour
         }
 
         Histogram h1 = new(abs);
-        Dictionary<int, int> histogram1 = h1.GenerateHistogram(satelliteManager.graph.degreeDistribution);
+        Dictionary<int, int> hdeg = h1.GenerateHistogram(satelliteManager.graph.degreeDistribution);
+        Dictionary<int, int> hcon = h1.GenerateHistogram(satelliteManager.graph.connexComponentsDistribution);
+        Dictionary<int, int> hclu = h1.GenerateHistogram(satelliteManager.graph.clusteringDegreeDistribution);
+
 
         for (int i = 0;i< 10;i++)
         {
-            GameObject h = Instantiate(histogramValuePrefab,hist1);
-            h.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (histogram1.TryGetValue(i,out int value) ? value : 0   / 100));
-            Debug.Log(value);
+            GameObject hd = Instantiate(histogramValuePrefab,hist1);
+            hd.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hdeg.TryGetValue(i,out int value1) ? value1*3 : 0));
+
+            GameObject hco = Instantiate(histogramValuePrefab, hist2);
+            hco.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hcon.TryGetValue(i, out int value2) ? value2 * 3 : 0));
+
+            GameObject hcl = Instantiate(histogramValuePrefab, hist3);
+            hcl.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hclu.TryGetValue(i, out int value3) ? value3 * 3 : 0));
+            Debug.Log("Degree: " + value1);
+            Debug.Log("Connex : " + value2);
+            Debug.Log("Clustering : " + value3);
         }
 
         displayedGraphUI = graphUI;
@@ -140,15 +156,27 @@ public class UIManager : MonoBehaviour
         displayedGraphUI = null;
     }
 
-
-    public void DisplayOrHIdeInfo(bool display)
+    public void UpdateGraphUI()
     {
-        if (display)
+        RemoveGraphUI();
+        DisplayGraphUI();
+    }
+
+
+    public void DisplayOrHIdeInfo()
+    {
+        if (!isGraphUIDisplayed)
         {
+            isGraphUIDisplayed = true;
             DisplayGraphUI();
+            infoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Hide Infos";
         } else
         {
+            isGraphUIDisplayed = false;
             RemoveGraphUI();
+            infoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Display Infos";
+            
+
         }
     }
 
