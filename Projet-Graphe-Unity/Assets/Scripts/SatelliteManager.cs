@@ -5,16 +5,6 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[Serializable]
-public class ListWrapper<T>
-{
-    public ListWrapper(List<T> list)
-    {
-        myList = list;
-    }
-    public List<T> myList;
-}
-
 public class SatelliteManager : MonoBehaviour
 {
     public GameObject satellitePrefab;
@@ -46,14 +36,6 @@ public class SatelliteManager : MonoBehaviour
 
     public static SatelliteManager instance;
 
-    //DEBUG
-    public List<ListWrapper<float>> distances;
-    public List<ListWrapper<bool>> cluster;
-    public List<int> d1;
-    public List<int> d2;
-    public List<int> c1;
-    public List<int> c2;
-
     // DEBUG
     public bool clearall = false;
 
@@ -69,7 +51,15 @@ public class SatelliteManager : MonoBehaviour
         allCsvs = Resources.LoadAll<TextAsset>("Csv");
         csvToLoad = 0;
         treshold = 20;
-        DisplayFromCsv(csvToLoad);
+        try
+        {
+            DisplayFromCsv(csvToLoad);
+        }
+        catch
+        {
+            parseWithComma = !parseWithComma;
+            DisplayFromCsv(csvToLoad);
+        }
         ConstructGraph();
     }
 
@@ -157,20 +147,6 @@ public class SatelliteManager : MonoBehaviour
             new ColoredVertexCreator(degreeGradient),
             new WeightedEdgeCreator(SquaredDistance, new LineRendererEdgeCreator(satelliteLink)),
             satellites.ToArray());
-        distances = new();
-        cluster = new();
-        c1 = new();
-        c2 = new();
-        d1 = new();
-        d2 = new();
-        foreach (float[] tab in graph.shortestDistanceMatrix)
-            distances.Add(new(new(tab)));
-        foreach (bool[] tab in graph.clusteringMatrix)
-            cluster.Add(new(new(tab)));
-        c1 = graph.clusteringDegreeDistribution.Keys.ToList();
-        c2 = graph.clusteringDegreeDistribution.Values.ToList();
-        d1 = graph.degreeDistribution.Keys.ToList();
-        d2 = graph.degreeDistribution.Values.ToList();
         OnGraphChanged?.Invoke();
     }
 
