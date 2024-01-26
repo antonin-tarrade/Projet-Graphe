@@ -38,7 +38,6 @@ public class SatelliteManager : MonoBehaviour
 
     public static SatelliteManager instance;
 
-
     public UIManager uiManager;
 
 
@@ -145,19 +144,18 @@ public class SatelliteManager : MonoBehaviour
 
     public void ConstructGraph()
     {
+        Graph<GameObject>.GetGraph(
+            ref graph, 
+            CompareWithTreshHold, 
+            new ColoredVertexCreator(degreeGradient),
+            new WeightedEdgeCreator(squaredDistance? SquaredDistance : Distance, new LineRendererEdgeCreator(satelliteLink)),
+            satellites.ToArray());
+        OnGraphChanged?.Invoke();
 
         if (uiManager.isGraphUIDisplayed)
         {
             uiManager.UpdateGraphUI();
         }
-
-        Graph<GameObject>.GetGraph(
-            ref graph, 
-            CompareWithTreshHold, 
-            new ColoredVertexCreator(degreeGradient),
-            new WeightedEdgeCreator((squaredDistance)? SquaredDistance : Distance, new LineRendererEdgeCreator(satelliteLink)),
-            satellites.ToArray());
-        OnGraphChanged?.Invoke();
     }
 
     private Vector3 ParsePositions(string[] line){
@@ -169,7 +167,6 @@ public class SatelliteManager : MonoBehaviour
         }
         return pos;
     }
-
 
 
 }
