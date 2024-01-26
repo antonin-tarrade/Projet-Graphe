@@ -155,7 +155,7 @@ public class SatelliteManager : MonoBehaviour
             ref graph, 
             CompareWithTreshHold, 
             new ColoredVertexCreator(degreeGradient),
-            new WeightedEdgeCreator((squaredDistance)? SquaredDistance : Distance, new LineRendererEdgeCreator(satelliteLink)),
+            new WeightedEdgeCreator(squaredDistance? SquaredDistance : Distance, new LineRendererEdgeCreator(satelliteLink)),
             satellites.ToArray());
         OnGraphChanged?.Invoke();
     }
