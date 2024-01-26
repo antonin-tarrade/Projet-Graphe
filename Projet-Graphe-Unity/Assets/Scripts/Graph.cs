@@ -270,12 +270,15 @@ public class Graph<T>
             for (int j = 0; j < adjacenceMatrix.Length; j++)
             {
                 M[i][j] = false;
-                for (int k = 0; k < adjacenceMatrix.Length; k++)
+                if (i !=j && adjacenceMatrix[i][j])
                 {
-                    if (adjacenceMatrix[i][k] && adjacenceMatrix[k][j])
+                    for (int k = 0; k < adjacenceMatrix.Length; k++)
                     {
-                        M[i][j] = adjacenceMatrix[i][j];
-                        break;
+                        if (i != k && j != k && adjacenceMatrix[i][k] && adjacenceMatrix[k][j])
+                        {
+                            M[i][j] = true;
+                            break;
+                        }
                     }
                 }
             }

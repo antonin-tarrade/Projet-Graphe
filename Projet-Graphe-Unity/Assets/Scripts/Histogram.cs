@@ -22,11 +22,11 @@ public class Histogram
         foreach (KeyValuePair<int,int> kvp in values)
         {
             int index = 0;
-            while (index<abcisses.Count && kvp.Key > abcisses[index])
+            while (index<abcisses.Count-1 && kvp.Key > abcisses[index])
             {
                 index++;
             }
-            index = Mathf.Clamp(index - 1, 0, abcisses.Count - 1);
+            index = Mathf.Clamp(index, 0, abcisses.Count - 1);
             if (histogram.TryGetValue(index, out int v)) histogram[index] = v+kvp.Value;
             else histogram.Add(index, kvp.Value);
         }
