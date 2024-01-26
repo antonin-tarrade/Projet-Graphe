@@ -188,8 +188,8 @@ public class SatelliteManager : MonoBehaviour
         if (selectedSatellites.Item1 != null && selectedSatellites.Item2 !=null)
         {
             distance = GetDistance(selectedSatellites.Item1, selectedSatellites.Item2);
-            UIManager.instance.UpdateDistanceUI();
-        } 
+        }
+        UIManager.instance.UpdateDistanceUI();
     }
 
     public float GetDistance(GameObject s1, GameObject s2)

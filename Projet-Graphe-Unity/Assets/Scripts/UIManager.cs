@@ -81,8 +81,16 @@ public class UIManager : MonoBehaviour
             string dist = satelliteManager.distance.ToString();
             distanceButton.text = n1 + " -> " + n2 + " : " + dist;
         }
+       else
+        {
+            distanceButton.text = "";
+        }
     }
 
+    public void ClearDistanceUI()
+    {
+        distanceButton.text = "";
+    }
 
     public void DisplaySatelliteUI(Satellite sattelite)
     {
@@ -279,8 +287,6 @@ public class UIManager : MonoBehaviour
             isGraphUIDisplayed = false;
             RemoveGraphUI();
             infoButton.GetComponentInChildren<TextMeshProUGUI>().text = "Display Infos";
-            
-
         }
     }
 
