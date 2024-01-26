@@ -126,7 +126,6 @@ public class UIManager : MonoBehaviour
         {
             GameObject h = Instantiate(histogramValuePrefab,hist1);
             h.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (histogram1.TryGetValue(i,out int value) ? value : 0   / 100));
-            Debug.Log(value);
         }
 
         displayedGraphUI = graphUI;
