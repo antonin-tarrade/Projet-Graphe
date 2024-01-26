@@ -103,6 +103,7 @@ public class SatelliteManager : MonoBehaviour
     public void DisplayFromCsv(int number)
     {
         mainCamera.transform.SetPositionAndRotation(new Vector3(0,0,0), Quaternion.identity);
+        uiManager.DesactivateReturnButton();
         averagePosition = new Vector3(0,0,0);
 
         string csv = allCsvs[number].text;
