@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour
 
     private GameObject displayedSatelliteUI;
     private GameObject displayedGraphUI;
+    private GameObject displayedDistanceUI;
 
     public bool isGraphUIDisplayed;
 
@@ -87,17 +88,20 @@ public class UIManager : MonoBehaviour
             distanceUI.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(1).GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = n2; 
             distanceUI.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(1).GetChild(1).GetComponentInChildren<RawImage>().texture = satelliteManager.selectedSatellites.Item2.GetComponent<Satellite>().img;
 
-            distanceUI.transform.GetChild(1).Find("Distance").GetComponentInChildren<TextMeshProUGUI>().text = "Shortest path : " + dist;
+            distanceUI.transform.GetChild(1).Find("Distance").GetComponentInChildren<TextMeshProUGUI>().text = "Shortest distance : " + dist + "km";
+
+            displayedDistanceUI = distanceUI;
         }
        else
         {
-            distanceButton.text = "";
+            ClearDistanceUI();
         }
     }
 
     public void ClearDistanceUI()
     {
-        distanceButton.text = "";
+        Destroy(displayedDistanceUI);
+        displayedDistanceUI = null;
     }
 
     public void DisplaySatelliteUI(Satellite sattelite)
