@@ -26,6 +26,8 @@ public class SatelliteManager : MonoBehaviour
     public LineRenderer satelliteLink;
     public float edgeSelectionThickness;
 
+    public bool squaredDistance;
+
     public bool calculate = false;
     public bool destroyComputer = false;
 
@@ -153,7 +155,7 @@ public class SatelliteManager : MonoBehaviour
             ref graph, 
             CompareWithTreshHold, 
             new ColoredVertexCreator(degreeGradient),
-            new WeightedEdgeCreator(SquaredDistance, new LineRendererEdgeCreator(satelliteLink)),
+            new WeightedEdgeCreator((squaredDistance)? SquaredDistance : Distance, new LineRendererEdgeCreator(satelliteLink)),
             satellites.ToArray());
         OnGraphChanged?.Invoke();
     }
