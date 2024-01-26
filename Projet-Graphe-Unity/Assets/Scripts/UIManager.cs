@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     public GameObject goBackButton;
     public GameObject infoButton;
     public GameObject squareButton;
-    public TextMeshProUGUI distanceButton;
+    public GameObject distanceUIPrefab;
 
 
     public static UIManager instance;
@@ -79,7 +79,15 @@ public class UIManager : MonoBehaviour
             string n1 = satelliteManager.selectedSatellites.Item1.GetComponent<Satellite>().satelliteName;
             string n2 = satelliteManager.selectedSatellites.Item2.GetComponent<Satellite>().satelliteName;
             string dist = satelliteManager.distance.ToString();
-            distanceButton.text = n1 + " -> " + n2 + " : " + dist;
+            GameObject distanceUI = Instantiate(distanceUIPrefab,goBackButton.transform.parent);
+            
+            distanceUI.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(0).GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = n1; 
+            distanceUI.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(0).GetChild(1).GetComponentInChildren<RawImage>().texture = satelliteManager.selectedSatellites.Item1.GetComponent<Satellite>().img; 
+
+            distanceUI.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(1).GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = n2; 
+            distanceUI.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(1).GetChild(1).GetComponentInChildren<RawImage>().texture = satelliteManager.selectedSatellites.Item2.GetComponent<Satellite>().img;
+
+            distanceUI.transform.GetChild(1).Find("Distance").GetComponentInChildren<TextMeshProUGUI>().text = "Shortest path : " + dist;
         }
        else
         {
