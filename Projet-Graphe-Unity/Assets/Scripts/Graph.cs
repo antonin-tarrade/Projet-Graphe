@@ -207,11 +207,6 @@ public class Graph<T>
         OnGraphCreated?.Invoke();     
     }
 
-    //public void CalculateClicks()
-    //{
-    //    clicks = CalculateClicks(adjacenceMatrix);
-    //}
-
     
     private bool[][] CalculateAdjacenceMatrix()
     {
@@ -347,32 +342,33 @@ public class Graph<T>
         return distrib;
     }
 
-    //private ISet<ISet<int>> CalculateClicks(bool[][] matrix)
-    //{
-    //    ISet<ISet<int>> clicks = new HashSet<ISet<int>>();
-    //    BB(matrix, ref clicks, new HashSet<int>(), new HashSet<int>(refs.Keys.Select<T, int>(e => IndexOf(e))), new HashSet<int>());
-    //    return clicks;
-    //}
 
-    //private void BB(bool[][] matrix, ref ISet<ISet<int>> clicks, ISet<int> click, ISet<int> vertices, ISet<int> handled)
-    //{
-    //    if (vertices.Count == 0 && handled.Count == 0)
-    //        if (click.Count > 0) clicks.Add(click);
-    //    int pivot = vertices.Union(handled).OrderBy(i => refs[Get(i)].degree).Last();
-    //    IEnumerable<int> iterable = vertices.Except(GetNeighbours(matrix, pivot));
-    //    foreach (int v in iterable)
-    //    {
-    //        List<int> neighbours = GetNeighbours(matrix, v);
-    //        BB(matrix, ref clicks, new HashSet<int>(click.Union(new HashSet<int>(v))), new HashSet<int>(vertices.Except(neighbours)), new HashSet<int>(handled.Union(neighbours)));
-    //        vertices = (ISet<int>)vertices.Except(new List<int>(v));
-    //        handled = (ISet<int>)handled.Except(new List<int>(v));
-    //    }
-    //}
+    // Cliques pas calculées => stackoverflow
+    private ISet<ISet<int>> CalculateClicks(bool[][] matrix)
+    {
+        ISet<ISet<int>> clicks = new HashSet<ISet<int>>();
+        BronKerbosh(matrix, ref clicks, new HashSet<int>(), new HashSet<int>(refs.Keys.Select<T, int>(e => IndexOf(e))), new HashSet<int>());
+        return clicks;
+    }
+    private void BronKerbosh(bool[][] matrix, ref ISet<ISet<int>> clicks, ISet<int> click, ISet<int> vertices, ISet<int> handled)
+    {
+        if (vertices.Count == 0 && handled.Count == 0)
+            if (click.Count > 0) clicks.Add(click);
+        int pivot = vertices.Union(handled).OrderBy(i => refs[Get(i)].degree).Last();
+        IEnumerable<int> iterable = vertices.Except(GetNeighbours(matrix, pivot));
+        foreach (int v in iterable)
+        {
+            List<int> neighbours = GetNeighbours(matrix, v);
+            BronKerbosh(matrix, ref clicks, new HashSet<int>(click.Union(new HashSet<int>(v))), new HashSet<int>(vertices.Except(neighbours)), new HashSet<int>(handled.Union(neighbours)));
+            vertices = (ISet<int>)vertices.Except(new List<int>(v));
+            handled = (ISet<int>)handled.Except(new List<int>(v));
+        }
+    }
 
 
 
 
-    
+
 
 
     private void CreateLinks()
