@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2531935929178085516}
   - component: {fileID: 3699068911836561223}
   - component: {fileID: 411735073356555970}
-  - component: {fileID: 410184408709374411}
+  - component: {fileID: 7730217022092495326}
   m_Layer: 5
   m_Name: HistogramValue
   m_TagString: Untagged
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.8543689, b: 1, a: 0.8}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &410184408709374411
+--- !u!114 &7730217022092495326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,8 +85,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3000245435198198571}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb30198aa32dd140b5750692dd48104, type: 3}
+  m_Script: {fileID: 11500000, guid: 109c41f08973846429af681aea0a30c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 15
+  r: {x: 5, y: 5, z: 0, w: 0}
+  rect2props: {x: 0.0000038146973, y: -2.5000076, z: 51.265244, w: 51.265244}
   image: {fileID: 411735073356555970}

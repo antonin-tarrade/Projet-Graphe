@@ -108,12 +108,13 @@ public class UIManager : MonoBehaviour
         graphUI.transform.SetParent(goBackButton.transform.parent);
 
         graphUI.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f, 0f);
-        Transform mainUI = graphUI.transform.GetChild(1);
-        Transform infoBox = mainUI.transform.GetChild(1);
-        Transform hist1 = infoBox.transform.GetChild(0).GetChild(1);
-        Transform hist2 = infoBox.transform.GetChild(1).GetChild(1);
-        Transform meanBox = infoBox.transform.GetChild(2);
-        Transform hist3 = infoBox.transform.GetChild(3).GetChild(1);
+        Transform infoBox = graphUI.transform.GetChild(1).GetChild(1);
+        Transform histBox = infoBox.transform.GetChild(0);
+        Transform hist1 = histBox.transform.GetChild(0).GetChild(1).GetChild(0).GetChild(0);
+        Transform hist2 = histBox.transform.GetChild(1).GetChild(1).GetChild(0).GetChild(0);
+        Transform hist3 = histBox.transform.GetChild(2).GetChild(1).GetChild(0).GetChild(0);
+        Transform hist4 = histBox.transform.GetChild(3).GetChild(1).GetChild(0).GetChild(0);
+        Transform meanBox = infoBox.transform.GetChild(1);
 
         meanBox.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Mean Degree : " + satelliteManager.graph.meanDegree;
         meanBox.GetChild(1).GetComponent<TextMeshProUGUI>().text = "Mean Clustering Degree : " + satelliteManager.graph.meanClusterDegree;
@@ -133,13 +134,14 @@ public class UIManager : MonoBehaviour
         for (int i = 0;i< 10;i++)
         {
             GameObject hd = Instantiate(histogramValuePrefab,hist1);
-            hd.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hdeg.TryGetValue(i,out int value1) ? value1*3 : 0));
+            hd.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hdeg.TryGetValue(i,out int value1) ? value1 * 2.5f : 0);
 
             GameObject hco = Instantiate(histogramValuePrefab, hist2);
-            hco.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hcon.TryGetValue(i, out int value2) ? value2 * 3 : 0));
+            hco.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hcon.TryGetValue(i, out int value2) ? value2 * 5f : 0);
 
-            GameObject hcl = Instantiate(histogramValuePrefab, hist3);
-            hcl.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, (hclu.TryGetValue(i, out int value3) ? value3 * 3 : 0));
+            GameObject hcl = Instantiate(histogramValuePrefab, hist4);
+            hcl.GetComponent<RectTransform>().sizeDelta = new Vector2(50f, hclu.TryGetValue(i, out int value4) ? value4 * 2.5f : 0);
+
         }
 
         displayedGraphUI = graphUI;
